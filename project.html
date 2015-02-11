@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+    Remove this if you use the .htaccess -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Project_Select</title>
+    <meta name="description" content="">
+    <meta name="author" content="PC-164">
+
+    <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="../javascripts/Project_Select.js"></script>
+    <link rel="stylesheet" type="text/css" href="../stylesheets/Project_Select.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  </head>
+  <body>
+    <header>
+      <h1>Project list</h1>
+      <ins id="user"></ins>님이 참여중인 프로젝트
+    </header>
+    <div id="wrap"> <!--리스트 전체를 감싸는 영역-->
+    </div><!--wrap--> 
+    
+   <!--modal-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+              &times;
+            </button>
+            <h4 class="modal-title">프로젝트 추가 하기</h4>
+          </div>
+          <div class="modal-body">
+            <form id="formProjectAdd" name="Project_Add" method="post" action="/ProjectAdd">
+              <input type="text" name="Project_Name" placeholder="프로젝트 이름"><br>
+              <input type="date" name="Project_Dday" placeholder="마감일 "><br>
+              <input type="text" name="Project_Memo" placeholder="설명"><br>
+              <input type="submit" value="프로젝트 만들기">
+            </form>
+          </div>
+        </div><!--/.modal-content-->
+      </div><!--/.modal-dialog-->
+    </div><!--/.modal-->
+  </body>
+  
+</html>
+

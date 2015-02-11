@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<title>wrong</title>
+		<meta name="description" content="">
+		<meta name="author" content="PC-164">
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<link rel="shortcut icon" href="/favicon.ico">
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+		<script>
+		function FindEmail(){
+			 $.ajax({
+                         url : '/MemberFind',
+                         dataType : 'json',
+                         type : 'POST',
+                         data : {
+                            'Member_Email' : $('#EmailText').val(),                  
+                                 },
+                          success : function(result) {
+				if (result.Member_Name == "" ) {
+					alert('No data');
+				} else {
+					if(confirm('사용자 이름이 '+result.Member_Name+' 이 맞 습니까?')){
+					   $.ajax({
+	                        	 url : '/MemberAdd',
+        	                	 dataType : 'json',
+                	        	 type : 'POST',
+                        		 data : {
+                        		    'Member_Email' : $('#EmailText').val(),                  
+	                        	         },
+        	                	  success : function(result) {
+					//	alert('멤버추가직전');
+					window.opener.top.location.href = "/Frame"	
+	        	                    window.close();
+        	        	                 }
+	  	             	          });
+        	                         }
+				    }
+				}
+                         });
+		}
+		</script>
+	</head>
+
+	<body>
+		<div>
+			<header>
+				<h1></h1>
+			</header>
+			<nav>
+
+			</nav>
+
+			<div id="addr">
+				E-mail 주소를 입력하세요
+				<input type="text" id="EmailText" placeholder="Email 주소를 입력해 주세요">
+			</div>
+
+			<div>
+				
+				<input type ="button" id="findBtn" value="찾기" href="javascript:void();" onclick = "FindEmail();" >
+				
+			</div>
+			<footer></footer>
+		</div>
+	</body>
+</html>
+

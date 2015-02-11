@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8">
+
+      <title>Mango_Project</title>
+      <meta name="description" content="">
+      <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+      <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+      <link href="../stylesheets/form_memo.css" rel="stylesheet" media="screen">
+      <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+      <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+      <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+      <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js"></script>
+      <script src="../javascripts/form_memo.js"></script>
+      <!-- chat -->
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+      <script src="../javascripts/chat.js"></script>
+   </head>
+   <body>
+      
+
+
+      <!--modal-->
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                     &times;
+                  </button>
+                  <h4 class="modal-title">해야 할 일 추가 하기</h4>
+               </div>
+               <div class="modal-body">
+                  <div id="memo_form">
+                     업무
+                     <input type="text" id="task_name">
+                     <br>
+                     마감일
+                     <input type="date" id="task_duedate">
+                     <br>
+                     참여자
+                     <input type="text" id="task_handler">
+                     <br>
+                     메모
+                     <input type="text" id="task_content">
+                     <br>
+                  </div>
+               </div>
+               <div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">
+                        닫기
+                     </button>
+                     <button type="button" id="save_btn" class="btn btn-primary" data-dismiss="modal">
+                        저장
+                     </button>
+                  </div>
+               </div>
+            </div><!--/.modal-content-->
+         </div><!--/.modal-dialog-->
+      </div><!--/.modal-->
+   </body>
+</html>
