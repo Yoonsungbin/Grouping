@@ -1,0 +1,27 @@
+﻿touch README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/Yoonsungbin/finaltest.git
+git push -u origin master
+
+
+서버에서 다운
+sudo git init
+sudo git add   
+sudo git commit -m "message"
+sudo git remote add origin address
+sudo git pull origin master
+
+서버로 보내기 업데이트
+git clone ~~
+git remote
+git commit -m ""
+git pull
+git push
+
+
+
+sudo git push origin +master  // 데이터손실이일어나도올린다
+
+origin은 절대경로이다

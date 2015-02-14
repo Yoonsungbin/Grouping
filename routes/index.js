@@ -4,6 +4,7 @@ var router = express.Router();
 var fs = require('fs');
 var Time = require('date-utils');
 var ObjectID = require('mongodb').ObjectID;
+var multer  = require('multer');
 /* GET home page. */
 
 /* First Page */
@@ -240,8 +241,8 @@ router.get('/form_temp', function (req, res) {
   });
 });
 
-router.get('/upload',function (req, res) {
-  fs.readFile('upload.html','utf-8', function (error ,data) {
+router.get('/File_Share',function (req, res) {
+  fs.readFile('File_Share.html','utf-8', function (error ,data) {
     res.writeHead(200, { 'Content-Type':'text/html'});
     res.end(data);
   });
@@ -261,8 +262,8 @@ router.get('/form_mindmap', function (req, res) {
   });
 });
 
-router.get('/form_ladder', function (req, res) {
-  fs.readFile('form_ladder.html', function (error, data){
+router.get('/up', function (req, res) {
+  fs.readFile('up.html', function (error, data){
     res.writeHead(200, { 'Content-Type':'text/html' });
     res.end(data,'utf8');
   });
@@ -274,6 +275,45 @@ router.get('/Calendar', function (req, res) {
     res.end(data,'utf8');
   });
 });
+
+
+router.post('/Calendar_Getdata', function(req, res){
+  var Project_Id = req.body.Project_Id;
+  var db = req.db;
+  var Project_Work = db.get('Project_Work');
+  console.log('Project_Work_Db 접근');
+  console.log(Project_Id);
+
+  Project_Work.find({"Project_Id":ObjectID(Project_Id)}, function(err, data){
+    if(!err){
+      console.log(data);
+      //console.log({"data":data.Work_Name, "Work_Finish":data.Work_Finish});
+      res.send(data);
+    }
+  })
+});
+router.post('/Calendar_Modify', function(req, res){
+var Work_Id = req.body.Work_Id;
+var Work_Sday = req.body.Work_Sday;
+var Work_Dday = req.body.Work_Dday;
+var db = req.db;
+var Project_Work = db.get('Project_Work');
+Project_Work.update({"_id":ObjectID(Work_Id)},{$set:{"Work_Sday":Work_Sday,"Work_Dday":Work_Dday}});
+ res.send({suc:'next'});
+ });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.get('/project', function (req, res) {
   fs.readFile('project.html', function (error, data){
@@ -545,10 +585,92 @@ router.post('/ProjectAdd', function (req,res) {
 });
 
 /* Image upload */
-router.post('/upload',function (req, res)  {
+router.post('/up123',function (req, res)  {
   console.log(req.files);
   console.log(req.files.path);
   res.send( 'Success upload files' );
+});
+
+
+
+
+/* upload */
+router.post('/upload', function(req,res){
+console.log(req.session);
+router.use(multer({ dest:'./public/files/'+req.session.Project_Id+'/'}));
+
+ var path=require('path');
+console.log(req.files);
+
+  fs.readFile(req.files.drive.path, function(err, data){
+   var dirname = path.resolve(".")+'/public/files/'+req.session.Project_Id+'/';
+ //  var dirname = __dirname +'/images/';
+    var newPath = dirname + req.files.drive.originalname;
+
+var db =req.db;
+var File = db.get('File');
+console.log(req.session.Project_Id);
+var today = Date.today().getFullYear()+'-'+Date.today().getMonth()+'-'+Date.today().getDay()+1;
+File.insert({"Project_Id":ObjectID(req.session.Project_Id),"File_Path":newPath,"File_Name":req.files.drive.originalname,"File_Size":req.files.drive.size,"File_Format":req.files.drive.extension,"File_Uploader":req.session.User_Name,"File_Date":today});
+	console.log('new path');
+	console.log(newPath);
+    fs.writeFile(newPath, data, function(err){
+      if(err){
+        res.json("Failed to upload your file");
+      }else
+      {
+	res.redirect("File_Share");
+       // res.json("Successfully uploaded your file");
+      }
+    });
+  });
+});
+
+router.get('/upload/:file', function(req,res){
+console.log('여긴언제들어오지');
+  var path=require('path');
+  file = req.params.file;
+	console.log(file);
+  var dirname = path.resolve(".")+'/public/files/'+req.session.Project_Id+'/';
+  //  var dirname = __dirname +'/files/abc/';
+  var img = fs.readFileSync(dirname + file);
+  res.writeHead(200,{'Content-Type':'image/jpg'});
+  res.end(img,'binary');
+});
+
+router.get('/showlist',function(req,res){
+	console.log(' list show ------------------------');
+  var path=require('path');
+ var dir=path.resolve(".")+'/public/files/'+req.session.Project_Id+'/';
+ // var dir=__dirname+'/public/files/'+req.session.Project_Id;
+  //fs.readdir(dir, function(err, list){
+  //  if (err){ 
+  //	console.log(err);
+  //  }else{
+  //      res.json(list);
+   // }
+//	//res.send(list);
+var db = req.db;
+var File = db.get('File');
+File.find({"Project_Id":ObjectID(req.session.Project_Id)}, function(err, data){
+		if( data == null ) {
+			console.log(' no data ' );
+		} else {
+			console.log('파일 리스트 보여주기 ');
+			console.log(data);
+			res.send(data);
+		}
+	});
+  });
+
+//router.get('/download:file(*)', function(req,res,next){
+router.get('/download/:id', function(req,res,next){
+	console.log('여기들어오니?');
+  var path=require('path');
+  var file=req.params.id;
+  //var path=path.resolve(".")+'/public/files/'+file;
+ var path=path.resolve(".")+'/public/files/'+req.session.Project_Id+'/'+file;
+  res.download(path);
 });
 
 /* User List */
@@ -589,32 +711,28 @@ router.post('/add', function ( req, res) {
 });
 //mobile project create
 router.post('/appprojectinit', function(req, res) {
+console.log('app Project init');
   // Get our form values. These rely on the "name" attributes
   var db = req.db;
   var User_Email = req.body.User_Email;
   var User_Pass = req.body.User_Pass;
   console.log('app project add');
+console.log(req.body.User_Id);
 var Project_Member = db.get('Project_Member');
-     Project_Member.find({ "Member.Member_Id" : ObjectID(req.body.Project_Id)}, function (err,memo) {
+     Project_Member.find({ "Member.Member_Id" : ObjectID(req.body.User_Id)}, function (err,memo) {
         if(memo == null) {
         }
         else{
           console.log('app memo :');
-          console.log(memo);
-          console.log(memo.length);
-          //      console.log(memo[0].Project_Name);
-          //      console.log(memo[1].Project_Name);
         }
         res.send(memo);
       });
-    }
   });
-});
 
 router.post('/appprojectcreate', function(req ,res) {
   var db = req.db;
   var Project_Db = db.get("Project");
-  var User_Id = req.body.User_Id;
+  var User_Id = ObjectID(req.body.User_Id);
   var Project_Name = req.body.Project_Name;
   var Project_Dday = req.body.Project_Dday;
   var User_Email = req.body.User_Email;
@@ -626,7 +744,6 @@ router.post('/appprojectcreate', function(req ,res) {
     else {
       console.log('Project insert success');
       console.log(data._id);
-      var User = db.get("User");
           var Project_Member = db.get("Project_Member");
           Project_Member.insert({"Project_Id":data._id,"Project_Name":data.Project_Name,"Project_Dday":data.Project_Dday,"Member":[{"Member_Id":User_Id,"Member_Name":User_Name,"Member_Position":'captin',"Member_Access":'false'}]}, function (err, member) {
             if(err){
@@ -699,7 +816,6 @@ router.post('/appprojectdelete',function (req,res) {
 
 router.post('/addprojectmember',function(req ,res) {
   var db = req.db;
-  var Project_Index = req.body.Project_Index;
   var Member_Email = req.body.Member_Email;
   var User_Pass = req.body.User_Pass;
   var User_Email = req.body.User_Email;
@@ -707,9 +823,9 @@ router.post('/addprojectmember',function(req ,res) {
   var Project_Member = db.get("Project_Member");
   var User = db.get("User");
   console.log('-------------------------------------');
-  console.log(Project_Index);
   console.log(Member_Email);
   console.log(User_Email);
+  console.log(req.body.Project_Id);
   console.log('-------------------------------------');
   console.log(User_Email);
   User.findOne({ "User_Email" : User_Email,
@@ -725,6 +841,8 @@ router.post('/addprojectmember',function(req ,res) {
               console.log('can not find user');
             }
             else {
+console.log(user);
+console.log(req.body.Project_Id);
         Project_Member.update({"Project_Id":ObjectID(req.body.Project_Id)},{$push:{"Member":{"Member_Id":user._id,"Member_Name":user.User_Name,"Member_Position":"crew","Member_Access":'false'}}} , function (err,member) {
 		if( member == null ) {
 			console.log('push error');
@@ -839,27 +957,27 @@ console.log('appviewmemo');
   });
 });
 
-
-
 router.post('/appaddmemo', function(req, res){
   console.log('appaddmemo 시작');
   console.log(req.body);
   var Project_Id = req.body.Project_Id;
   var Work_Name = req.body.Work_Name;
   var Work_Memo = req.body.Work_Memo;
+  var Work_Sday = req.body.Work_Sday;
   var Work_Dday = req.body.Work_Dday;
   var Work_Finish = req.body.Work_Finish;
   var Work_Person = JSON.parse(req.body.Work_Person);
 
   var db = req.db;
-  var Project_Work_Db = db.get('Project_Work');
+  var Project_Work = db.get('Project_Work');
   var User_Db = db.get("User");
   console.log('appaddmemo DB에 추가 시작');
       console.log('_id와 User_Id 가 매칭이 됐다');
-        Project_Work_Db.insert({
+        Project_Work.insert({
           "Project_Id": ObjectID(Project_Id),
           "Work_Name": Work_Name,
           "Work_Memo": Work_Memo,
+          "Work_Sday" : Work_Sday,
           "Work_Dday": Work_Dday,
           "Work_Finish": Work_Finish,
           "Work_Person": Work_Person
@@ -869,28 +987,31 @@ router.post('/appaddmemo', function(req, res){
           }
         });
 });
-router.post('/appinsertmemo', function(req, res){
+
+router.post('/appmodifymemo', function(req, res){
   console.log('appinsertmemo 시작');
   console.log(req.body);
   var Project_Work_Id = req.body.Project_Work_Id;
   var Project_Id = req.body.Project_Id;
   var Work_Name = req.body.Work_Name;
   var Work_Memo = req.body.Work_Memo;
+  var Work_Sday = req.body.Work_Sday;
   var Work_Dday = req.body.Work_Dday;
   var Work_Finish = req.body.Work_Finish;
   var Work_Person = JSON.parse(req.body.Work_Person);
 
   var db = req.db;
-  var Project_Work_Db = db.get('Project_Work');
+  var Project_Work = db.get('Project_Work');
 
-  Project_Work_Db.update({"_id":ObjectID(Project_Work_Id)},{$set:{
+  Project_Work.update({"_id":ObjectID(Project_Work_Id)},{$set:{
     "Work_Name": Work_Name,
     "Work_Memo": Work_Memo,
+    "Work_Sday" : Work_Sday,
     "Work_Dday": Work_Dday,
     "Work_Finish": Work_Finish,
     "Work_Person": Work_Person
   }});
- 
+ console.log('수정 성공!!');
   res.send({suc:'next'});
 });
 
@@ -936,30 +1057,29 @@ router.post('/appshowmemo', function(req,res){
     }
   });
 });
-router.post('/appgetprojectmember', function(req, res){
 
+router.post('/appgetprojectmember', function(req, res){
   var Project_Id = req.body.Project_Id;
   console.log(Project_Id);
- // console.log(objectId);
-  var db = req.db;
-//  console.log(req);
+ var db = req.db;
 
-  var Project_Member = db.get('Project_Member');
+var Project_Member = db.get('Project_Member');
 console.log('appgetprojectmember 진입');
 console.log(ObjectID(Project_Id));
-  Project_Member.find({"Project_Id":ObjectID(Project_Id)}, function(err, data){
-    if(err){
-      console.log('data가없음');
-    }
-    else{
-      console.log('찾음');
-      console.log(data);
-      res.send(data);
-    }
-
-  });
-
+Project_Member.find({"Project_Id":ObjectID(Project_Id)}, function(err, data){
+  if(err){
+    console.log('data가없음');
+  }
+  else{
+    Project_Member.col.aggregate({$match:{"Project_Id":ObjectID(Project_Id)}},{$unwind:'$Member'},{$group:{"_id":'$_id',"In_Member":{$push:'$Member.Member_Name'}}}, function (err, member) {
+     console.log('찾음');
+     console.log(member);
+     res.send(member);
+   });
+  }
 });
+});
+
 router.post('/appaddcomment', function(req, res){
 
  // console.log(req.body);

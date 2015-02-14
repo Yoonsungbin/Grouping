@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" href="css/themes/MangoApp_theme.css" />
+	<link rel="stylesheet" href="css/themes/MangoApp_theme.min.css" />
+	<link rel="stylesheet" href="css/icon.css" />
+	<script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+	<script	src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	<script src="fastclick.js"></script>
+	<script type="text/javascript" src="http://cdn.socket.io/socket.io-1.2.1.js"></script>
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>
+	<script src="jquery.ui.touch-punch.min.js"></script>
+	
+	<script>
+		$.mobile.defaultPageTransition = 'none'
+		$.mobile.defaultDialogTransition = 'none'
+		$.mobile.buttonMarkup.hoverDelay = 0
+	</script>
+	<!-- 업무에 드래그엔 드롭-->
+	<script>
+		$(document).bind('pageinit', function() {
+			$( "#pre_memolist" ).sortable({ // id가 pre_memolist인것을 sortable하겠다.
+				handle:".ui-icon-bars",	//아이콘(bars) touch시만 drag & drop
+				 items: 'li[id!=headermenu]' // 맨 윗줄 list-dvider는 drag & drop 금지
+				});
+			$( "#pre_memolist" ).disableSelection();
+			// <!-- Refresh list to the end of sort to have a correct display -->
+			$( "#pre_memolist" ).bind( "sortstop", function(event, ui) {
+				$('#pre_memolist').listview('refresh');
+			});
+		});
+	</script>
+
+	<script type="text/javascript">
+		var socket = io.connect('http://54.65.21.180:8080/');
+		var User_Name = localStorage.getItem('User_Name');
+		var Project_Id = localStorage.getItem('Project_Id');
+		var Project_Index = localStorage.getItem('Project_Index');
+		var Time = new Date();
+
+		var lastdate = '';
+
+		socket.emit('join', {
+			User_Name : User_Name,
+			Project_Id : Project_Id
+		});
+		socket.emit('getgreet', User_Name + '님이 접속하셨습니다.');
+		console.log('chat join');
+		socket.on('connect',function() {
+			$('form').submit(
+				function() {
+					var message = $('#m').val();
+					var current_time = Time.getHours() + ":"
+					+ Time.getMinutes();
+					socket.emit('getmessage', {
+						message : message,
+						User_Name : User_Name,
+						Time : current_time
+					});
+					$('#m').val('');
+					return false;
+				});
+			socket.on('premessage',function(data) {
+				var text = '';
+				if (data.Member == User_Name) {
+					text += "<div>";
+					text += "<span style='display:inline-block; .display:inline; float: right; border: 1px solid blue; margin:auto width:auto'>"
+					+ data.message
+					+ "</span>";
+					text += "<span style='display:inline-block; .display:inline; float: right; margin:auto width:auto'><sub>"
+					+ data.Time
+					+ "</sub></span>";
+					text += "</div><p>&nbsp;</p>";
+					$('#messages').append(text);
+				} else {
+					var text = '';
+
+					text += "<div>";
+					text += "<span style='display:inline-block; .display:inline; float: left; border: 1px solid red; margin:auto width:auto'>"
+					+ data.Member
+					+ ':'
+					+ "</span>";
+					text += "<span style='display:inline-block; .display:inline; float: left; border: 1px solid red; margin:auto width:auto'>"
+					+ data.message
+					+ "</span>";
+
+					text += "<span style='display:inline-block; .display:inline; float: left; margin:auto width:auto'><sub>"
+					+ data.Time
+					+ "</sub></span>";
+					text += "</div><p>&nbsp;</p>";
+					$('#messages').append(text);
+				}
+
+				var el = document
+				.getElementById('messages');
+				el.scrollIntoView(false);
+			});
+socket.on('putgreet', function(msg) {
+	$('#messages').append(
+		$('<h4 align="center">').text(msg));
+})
+
+						//접속유저 보이는 곳
+						socket.on('Connect_Member', function(data) {
+							console.log('userprint');
+							var dataform = JSON.stringify(data);
+							var user = '';
+							console.log(dataform);
+							var temp = JSON.parse(dataform);
+							var count = temp.length;
+							console.log('count : ' + count);
+
+							var list = [];
+							for (var i = 0; i < count; i++) {
+								console.log(temp[i]);
+								list.push({
+									'user' : temp[i].Member
+								});
+							}
+							$.each(list, function(index, item) {
+								user += "<li>" + "●" + item.user + "<br></li>";
+							});
+							console.log(user);
+							$('#access_user').empty();
+							$('#access_user').listview().listview('refresh');
+							$('#access_user').append(user).listview('refresh');
+							user = '';
+							list = '';
+						});
+						socket.on('Disconnect_Member',
+							function(data) {
+								console.log('disconnect user print');
+								var dataform1 = JSON.stringify(data);
+								var user1 = '';
+								var temp1 = JSON.parse(dataform1);
+								var count1 = temp1.length;
+								console.log('count : ' + count1);
+
+								var list1 = [];
+								for (var i = 0; i < count1; i++) {
+									list1.push({
+										'user' : temp1[i].Member
+									});
+								}
+								$.each(list1, function(index, item) {
+									user1 += "<li>" + "●" + item.user
+									+ "<br></li>";
+								});
+								console.log(user1);
+								$('#nonaccess_user').empty();
+								$('#nonaccess_user').listview().listview(
+									'refresh');
+								$('#nonaccess_user').append(user1)
+								.listview('refresh');
+								user1 = '';
+								list1 = '';
+							});
+
+						socket
+						.on(
+							'putmessage',
+							function(data) {
+
+								if (data.User_Name == User_Name) {
+									var text = '';
+									text += "<div>";
+
+									text += "<span style='display:inline-block; .display:inline; float: right; border: 1px solid blue; margin:auto width:auto'>"
+									+ data.message
+									+ "</span>";
+									text += "<span style='display:inline-block; .display:inline; float: right; margin:auto width:auto'><sub>"
+									+ data.Time
+									+ "</sub></span>";
+									text += "</div><p>&nbsp;</p>";
+									$('#messages').append(text);
+
+								} else {
+									var text = '';
+									text += "<div>";
+									text += "<span style='display:inline-block; .display:inline; float: left; border: 1px solid red; margin:auto width:auto;'>"
+									+ data.User_Name
+									+ ':'
+									+ "</span>";
+									text += "<span style='display:inline-block; .display:inline; float: left; border: 1px solid red; margin:auto width:auto;'>"
+									+ data.message
+									+ "  </span>";
+									text += "<span style='display:inline-block; .display:inline; float: left; margin:auto width:auto;'><sub>"
+									+ data.Time
+									+ "</sub></span>";
+									text += "</div><p>&nbsp;</p>";
+									$('#messages').append(text);
+
+								}
+								var el = document
+								.getElementById('messages');
+								el.scrollIntoView(false);
+							});
+
+});
+
+function addprojectmember() {
+	console.log($("#member_name").val());
+	console.log('success');
+	$.ajax({
+		url : 'http://54.65.21.180:8080/App_ProjectMember',
+		dataType : 'json',
+		type : 'POST',
+		data : {
+			'Project_Index' : Project_Index,
+			'Member_Email' : $("#member_name").val(),
+			'User_Email' : localStorage.getItem('User_Email'),
+			'User_Pass' : localStorage.getItem('User_Pass')
+			//프로젝트 내용
+		},
+		success : function(result) {
+			console.log('success');
+			window.close();
+		}
+	});
+}
+</script>
+
+<script>
+	// 할일메모
+	var Work = new Array();
+	$
+	.ajax({
+		url : 'http://54.65.21.180:8080/App_TaskAppend',
+		dataType : 'json',
+		type : 'POST',
+		data : {
+			'Project_Id' : localStorage.getItem('Project_Id'),
+			'User_Name' : localStorage.getItem('User_Name')
+		},
+		success : function(result) {
+
+			var memodataform = JSON.stringify(result);
+			var memotemp = JSON.parse(memodataform);
+
+			console.log('momo count : ' + memotemp.length);
+			var memocount = memotemp.length;
+
+			for (var i = 0; i < memocount; i++) {
+
+				Work[i] = memotemp[i].Work_Name;
+			}
+			var memolist = [];
+			for (var i = 0; i < memocount; i++) {
+				memolist.push({
+					'title' : Work[i]
+				});
+			}
+
+			var text = "";
+			var index = 0;
+			$
+			.each(
+				memolist,
+				function(index, item) {
+					console.log(result[index]._id);
+					text += "<li class='ui-state-default'>"
+					+"<a class='memolist' id ='"+ result[index]._id + "' href='' rel='external'>"
+					+"<span class='ui-icon ui-icon-bars ui-btn-icon-left'></span>"
+					+"<span class='ui-li-count'>D - 3</span>"
+					+ item.title
+					+ "<a href='' class ='TaskDelete' name = '"+result[index]._id+"' data-rel='popup' data-position-to='window' data-transition='pop'>삭제</a></li>"
+					index++;
+				});
+			$('#pre_memolist').append(text).listview('refresh');
+			console.log('출력 완료');
+		}
+	});
+
+$(document).on("click",".memolist",function() {
+	localStorage.setItem("Project_Work_Id", this.id);
+		//console.log(localStorage.getItem("Memo_Id"));
+		location.replace('memo_show.html');
+	});
+</script>
+
+
+<!--Task 추가 했을때  -->
+<script>
+
+	function cancelfunc(){
+		location.replace('tab_memo.html');
+	}
+
+	function TaskAdd() {
+		var Work_Person = new Array();
+		var sel = document.getElementsByTagName('select').item(0);
+
+		$('#select-participant > option:selected').each(function() {
+			var User_Info = new Object();
+			User_Info.User_Name = $(this).text();
+			User_Info.User_Id = $(this).val();
+			Work_Person.push(User_Info);
+		});
+
+		var dataform = JSON.stringify(Work_Person);
+		$.ajax({
+			url : 'http://54.65.21.180:8080/App_TaskAdd',
+			dataType : 'json',
+			type : 'POST',
+			data : {
+				'Project_Id' : localStorage.getItem('Project_Id'),
+				'Work_Name' : $('#m_sbj').val(),
+				'Work_Memo' : $('#m_textarea').val(),
+				'Work_Dday' : $('#m_date').val(),
+				'Work_Finish' : 'ing', 
+				'Work_Person' : dataform
+			//프로젝트 내용
+		},
+		success : function(result) {
+			console.log('success');
+		}
+	});
+		location.replace('tab_memo.html');
+	}
+
+	function selectmember() {
+		
+		$.ajax({
+			url : 'http://54.65.21.180:8080/App_GetProjectMember',
+			dataType : 'json',
+			type : 'POST',
+			data : {
+				'Project_Id' : localStorage.getItem('Project_Id')
+			},
+
+			success : function(result) {
+				var Project_Member = [];
+				var User_Id = [];
+				var dataform = JSON.stringify(result);
+				var temp = JSON.parse(dataform);
+				count = temp.length;
+
+				for (var i = 0; i < count; i++) {
+					Project_Member[i] = temp[i].Member;
+					User_Id[i] = temp[i].User_Id;
+				}
+
+				var list = [];
+				var index = 0;
+
+				for (var i = 0; i < count; i++) {
+					list.push({
+						'title' : Project_Member[i],
+						'id' : User_Id[i]
+					});
+				}
+
+				var text = "";
+				$.each(list, function(index, item) {
+					text += "<option value="+item.id+">" + item.title + "</option>";
+				});
+						// 리스트의 끝에 프로젝트 추가를 만듭니다.
+						$('#select-participant').empty();
+						$('#select-participant').listview().listview('refresh');
+						$('#select-participant').append(text).listview('refresh');
+
+						text = "";
+						index = 0;
+						list = [];
+					}
+				});	
+		}
+
+$(document).on("click", ".TaskDelete",function() {
+	
+	$.ajax({
+		url : 'http://54.65.21.180:8080/App_TaskDelete',
+		dataType : 'json',
+		type : 'POST',
+		data : {'Delete_MemoId' : this.name},
+		success : function(data) {
+			location.replace('tab_memo.html');											
+		}
+	});	
+});
+
+
+
+
+</script>
+
+</head>
+<body onload="initFastButtons();">
+	<span id="fastclick"> 
+
+		<!-- *************************************************************************************** -->
+		<!-- **************************************해야 할 일 창************************************ -->
+		<!-- *************************************************************************************** -->
+
+		<div data-role="page" id="tab_memo">
+
+			<div data-role="panel" id="memopanel" data-position="left"
+			data-position-fixed="true" data-display="overlay" data-theme="a">
+			<h1>설정</h1>
+			<ul data-role="listview" data-theme="a">
+				<li><a href="mypage.html">내 정보</a></li>
+				<li><a href="project_select.html">프로젝트 선택창</a></li>
+				<li><a href="App_community.html">커뮤니티</a></li>
+				<li><a href="index.html">로그아웃</a></li>
+				<li><a href="#" data-rel="close">닫기</a></li>
+			</ul>
+		</div>
+		<!-- 설정 패널창 -->
+
+		<div data-role="header" data-theme="a" data-position="fixed"
+		data-tap-toggle="false">
+		<a href="#memopanel" data-icon="gear">설정</a>
+		<h1>main화면</h1>
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#tab_memo"
+					class="ui-btn-active ui-state-persist ui-btn ui-nodisc-icon ui-icon-memo ui-btn-icon-top">업무</a></li>
+					<li><a href="#tab_schedule"
+						class="ui-btn ui-nodisc-icon ui-icon-schedule ui-btn-icon-top ">일정</a></li>
+						<li><a href="#tab_addfunc"
+							class="ui-btn ui-nodisc-icon ui-icon-addfunc ui-btn-icon-top">부가기능</a></li>
+							<li><a href="#tab_chat"
+								class="ui-btn ui-nodisc-icon ui-icon-chat ui-btn-icon-top">채팅</a></li>
+							</ul>
+						</div>
+					</div>
+					<!-- header -->
+ 
+
+					</div>
+					<!-- content -->
+
+					<div data-role="footer" data-position="fixed" data-tap-toggle="false">
+						<div data-role="navbar">
+							<ul>
+								<li>
+									<a href="#addmemo" data-rel="popup" data-position-to="window" class="ui-btn ui-icon-plus ui-btn-icon-top">
+										업무 추가
+									</a>
+								</li>
+							</ul>
+						</div>
+
+
+					</div>
+					<!-- footer -->
+
+					<div data-role="popup" id="addmemo" data-theme="a"
+					class="ui-corner-all">
+					<form>
+						<div style="padding: 10px 20px;">
+							<h3>메모 추가</h3>
+							                      <label for="memo_name">메모명</label> <input
+							type="text" name="memo_name" id="m_sbj" value="" data-theme="a">
+
+
+							<label for="select-participant" class="select">참여자</label> <select
+							multiple="multiple" data-native-menu="false"
+							name="select_choice[]" id="select-participant"
+							onclick="selectmember()">
+						</select> <label for="memo_date">마감일</label> <input type="date"
+						name="memo_date" id="m_date" data-clear-btn="true" data-theme="a">
+						<label for="memo_textarea">상세내용</label>
+						<textarea name="memo_textarea" id="m_textarea" cols="30" rows="8"
+						data-theme="a"></textarea>
+						<button type="submit" id="memoadd"
+						class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check"
+						onclick="TaskAdd();" rel="external">추가</button>
+						<button type="submit" id="cancel"
+						class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" onclick="cancelfunc();"
+						rel="external">취소</button>
+
+
+
+					</div>
+				</form>
+			</div>
+			<!-- 메모 popup -->
+
+		</div> <!-- page --> <!-- *************************************************************************************** -->
+		<!-- **************************************스케줄 창**************************************** -->
+		<!-- *************************************************************************************** -->
+		<div data-role="page" id="tab_schedule">
+
+			<div data-role="panel" id="schedulepanel" data-position="left"
+			data-position-fixed="true" data-display="overlay" data-theme="a">
+			<h1>설정</h1>
+			<ul data-role="listview" data-theme="a">
+				<li><a href="mypage.html">내 정보</a></li>
+				<li><a href="project_select.html">프로젝트 선택창</a></li>
+				<li><a href="App_community.html">커뮤니티</a></li>
+				<li><a href="index.html">로그아웃</a></li>
+				<li><a href="#" data-rel="close">닫기</a></li>
+			</ul>
+		</div>
+		<!-- 설정 패널창 -->
+
+		<div data-role="header" data-theme="a" data-position="fixed"
+		data-tap-toggle="false">
+		<a href="#schedulepanel" data-icon="gear">설정</a>
+		<h1>일 정</h1>
+		<div data-role="navbar">
+			<ul>
+				<li><a href="#tab_memo"
+					class="ui-btn ui-nodisc-icon ui-icon-memo ui-btn-icon-top">업무</a></li>
+					<li><a href="#tab_schedule"
+						class="ui-btn-active ui-state-persist ui-btn ui-nodisc-icon ui-icon-schedule ui-btn-icon-top ">일정</a></li>
+						<li><a href="#tab_addfunc"
+							class="ui-btn ui-nodisc-icon ui-icon-addfunc ui-btn-icon-top">부가기능</a></li>
+							<li><a href="#tab_chat"
+								class="ui-btn ui-nodisc-icon ui-icon-chat ui-btn-icon-top">채팅</a></li>
+							</ul>
+						</div>
+					</div>
+					<div data-role="content" data-theme="a">
+						<img src="./img/calendar.png" height=350 width=auto>
+						<p>
+						</div>
+						<div data-role="footer" data-position="fixed" data-tap-toggle="false">
+							<h4>페이지 바닥글</h4>
+						</div>
+					</div> <!-- *************************************************************************************** -->
+					<!-- **************************************부가기능 창************************************** -->
+					<!-- *************************************************************************************** -->
+
+					<div data-role="page" id="tab_addfunc">
+
+						<div data-role="panel" id="addfuncpanel" data-position="left"
+						data-position-fixed="true" data-display="overlay" data-theme="a">
+						<h1>설정</h1>
+						<ul data-role="listview" data-theme="a">
+							<li><a href="mypage.html">내 정보</a></li>
+							<li><a href="project_select.html">프로젝트 선택창</a></li>
+							<li><a href="App_community.html">커뮤니티</a></li>
+							<li><a href="index.html">로그아웃</a></li>
+							<li><a href="#" data-rel="close">닫기</a></li>
+						</ul>
+					</div>
+					<!-- 설정 패널창 -->
+
+					<div data-role="header" data-theme="a" data-position="fixed"
+					data-tap-toggle="false">
+					<a href="#addfuncpanel" data-icon="gear">설정</a>
+					<h1>부가기능</h1>
+					<div data-role="navbar">
+						<ul>
+							<li><a href="#tab_memo"
+								class="ui-btn ui-nodisc-icon ui-icon-memo ui-btn-icon-top">업무</a></li>
+								<li><a href="#tab_schedule"
+									class="ui-btn ui-nodisc-icon ui-icon-schedule ui-btn-icon-top ">일정</a></li>
+									<li><a href="#tab_addfunc"
+										class="ui-btn-active ui-state-persist ui-btn ui-nodisc-icon ui-icon-addfunc ui-btn-icon-top">부가기능</a></li>
+										<li><a href="#tab_chat"
+											class="ui-btn ui-nodisc-icon ui-icon-chat ui-btn-icon-top">채팅</a></li>
+										</ul>
+									</div>
+								</div>
+								<div data-role="content" data-theme="a">
+									<div data-role="navbar" data-theme="a">
+										<a href="vote_list.html">투표</a> <a href="ghostleg.html">사다리</a>
+									</div>
+								</div>
+								<div data-role="footer" data-position="fixed" data-tap-toggle="false">
+									<h4>페이지 바닥글</h4>
+								</div>
+							</div>
+						</div> <!-- *************************************************************************************** -->
+						<!-- ***************************************채팅 창***************************************** -->
+						<!-- *************************************************************************************** -->
+
+						<div data-role="page" id="tab_chat">
+
+							<div data-role="panel" id="chatpanel" data-position="left"
+							data-position-fixed="true" data-display="overlay" data-theme="a">
+							<h1>설정</h1>
+							<ul data-role="listview" data-theme="a">
+								<li><a href="mypage.html">내 정보</a></li>
+								<li><a href="project_select.html">프로젝트 선택창</a></li>
+								<li><a href="App_community.html">커뮤니티</a></li>
+								<li><a href="index.html">로그아웃</a></li>
+								<li><a href="#" data-rel="close">닫기</a></li>
+							</ul>
+						</div>
+						<!-- 설정 패널창 -->
+
+						<div data-role="panel" id="memberpanel4" data-position="right"
+						data-position-fixed="true" data-display="overlay" data-theme="a">
+						<h3>접속한 멤버</h3>
+						<ul data-role="listview" data-theme="a">
+							<ul id="access_user"></ul>
+						</ul>
+						<h3>접속한안 멤버</h3>
+						<ul data-role="listview" data-theme="a">
+							<ul id="nonaccess_user"></ul>
+						</ul>
+
+					</div>
+					<!-- 멤버보기 패널창 -->
+
+					<!--헤더부분 -->
+					<div data-role="header" data-theme="a" data-position="fixed"
+					data-tap-toggle="false">
+					<a href="chatpanel" data-icon="gear">설정</a> <a href="#memberpanel4"
+					data-icon="gear">멤버보기</a>
+					<h1>main화면</h1>
+					<div data-role="navbar">
+						<ul>
+							<li><a href="#tab_memo"
+								class="ui-btn ui-nodisc-icon ui-icon-memo ui-btn-icon-top">업무</a></li>
+								<li><a href="#tab_schedule"
+									class="ui-btn ui-nodisc-icon ui-icon-schedule ui-btn-icon-top ">일정</a></li>
+									<li><a href="#tab_addfunc"
+										class="ui-btn ui-nodisc-icon ui-icon-addfunc ui-btn-icon-top">부가기능</a></li>
+										<li><a href="#tab_chat"
+											class="ui-btn-active ui-state-persist ui-btn ui-nodisc-icon ui-icon-chat ui-btn-icon-top">채팅</a></li>
+										</ul>
+									</div>
+								</div>
+								<!-- header -->
+								<!-- 컨텐츠 부분 -->
+								<div data-role="content" data-theme="a" id="txtarea">
+
+									<div id="chatheight"
+									style="width: 100%; height: 95%; border: solid 1px; overflow: scroll; overflow-x: hidden;">
+
+									<ul id="messages"></ul>
+
+								</div>
+
+								<!-- 채팅방 높이 조절 -->
+								<script>
+									var head_height = $('[data-role=header]').outerHeight() + 90;
+									var footer_height = $('[data-role=footer]').outerHeight() + 90;
+									var content_height = $(document).height() - head_height
+									- footer_height;
+
+									$('[data-role=content]').css('height',
+										content_height + 'px');
+								</script>
+							</div>
+
+
+							<div data-role="footer" data-position="fixed" data-tap-toggle="false">
+								<form id="" class="ui-grid-a">
+									<div class="ui-block-a" style="width: 80%">
+										<input type="text" id="m" autocomplete="off" data-inline="true">
+									</div>
+									<div class="ui-block-b" style="width: 20%">
+										<input type="submit" id="target" value="전 송" data-inline="false">
+									</div>
+								</form>
+							</div>
+						</div>
+					</span>
+					<!-- end fastclick -->
+				</body>
+				</html>

@@ -1,0 +1,38 @@
+<div data-role="popup" id="addmemo" data-theme="a"
+            class="ui-corner-all">
+            <form>
+               <div style="padding: 10px 20px;">
+                  <h3>메모 추가</h3>
+                                        <label for="memo_name">메모명</label> <input
+                  type="text" name="memo_name" id="m_sbj" value="" data-theme="a">
+
+
+                  <label for="select-participant" class="select">참여자</label> <select
+                  multiple="multiple" data-native-menu="false"
+                  name="select_choice[]" id="select-participant"
+                  onclick="selectmember();"></select> 
+                  <label for="memo_date_start">시작일</label> 
+                  <input type="date" name="memo_date_start" id="m_date_start" data-clear-btn="true" data-theme="a">
+                  
+                  <label for="memo_date_end">마감일</label> 
+                  <input type="date" name="memo_date_end" id="m_date_end" data-clear-btn="true" data-theme="a">
+               
+            
+               <label for="memo_textarea">상세내용</label>
+               <textarea name="memo_textarea" id="m_textarea" cols="30" rows="8"
+               data-theme="a"></textarea>
+
+               <div class="ui-grid-a">
+                  <a href='' id="memoadd"
+                  class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-check ui-block-a"
+                  onclick="memoaddfunc();" rel="external" style="height:40px;">추가</a>
+                  <a href='' id="cancel"
+                  class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-btn-icon-left ui-icon-delete ui-block-b" data-rel="back"
+                  style="height:40px;">취소</a>
+               </div>
+
+
+
+            </div>
+         </form>
+      </div>

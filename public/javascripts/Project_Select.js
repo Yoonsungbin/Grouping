@@ -47,7 +47,7 @@ function prepare() {
          text += "<span>" + item.memo + "</span></div>";
          text += "<div><span>" + item.memo + "</span>";
          text += "<img class='del' src='../images/delete.png'></div>";
-         text += "</div></div>";
+         text += "</div></div></div>";
       });
       // 프로젝트 추가 이미지
       text += "<div class='prj'><a data-toggle='modal' href='#myModal' data-role='add'>";

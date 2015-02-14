@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>File_Share</title>
+		<meta name="description" content="">
+		<meta name="author" content="PC-164">
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<link rel="shortcut icon" href="/favicon.ico">
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script src="../javascripts/File_Share.js"></script>
+		<link rel="stylesheet" type="text/css" href="../stylesheets/File_Share.css">
+	</head>
+
+	<body>
+		<header>
+			<h2><small>프로젝트 </small><span id="prj"></span><small>의 공유 파일</small></h2>
+		</header>
+		<nav>
+			<form id="file_add" action="upload" method="post" enctype="multipart/form-data">
+				<input type="file" name="drive">
+				<input type="submit" value="올리기">
+			</form>
+			<span id="view">
+				<img id='list' src='list.png'>
+				<img id='thumbnail' src='thumbnail.png'>
+			</span>
+		</nav>
+
+		<div id='content'>
+			<!--파일을 보여주는 공간-->
+		</div>
+
+		<!--footer>
+			<p>
+				411MB / 1GB 사용중입니다.
+			</p>
+		</footer-->
+	</body>
+</html>
+

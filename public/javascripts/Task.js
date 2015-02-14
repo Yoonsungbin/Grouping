@@ -27,18 +27,19 @@ $.getJSON('/TaskAppend', function(data) {
 	var text = "";
 
             $.each(Work_List, function(index, item) {
-               text += "<div class ='card' id='" + item.Id + "'  style='top:"+item.Top+"; left:"+item.Left+";'>";
+	       text += "<div class ='card' id='" + item.Id + "'  style='top:"+item.Top+"; left:"+item.Left+";'>";
                text += "<div class='card-content'>";
                text += "할 일 이름 : " + item.Name;
                text += "<br>마감일 : " + item.Dday;
                text += "<br>담당자 : " + item.Person;
                text += "<br>내용 : " + item.Memo;
-              text += "</div></div>";
+               text += "</div>";
+               text += "</div><p>&nbsp;</p></div><p>&nbsp;</p></div><p>&nbsp;</p>";
             });
 
             $('body').append(text);
             $('.card').draggable({
-               grid : [205, 140]
+             //  grid : [205, 140]
             });
 	});
 ///////////////////////////////////////////
@@ -62,13 +63,13 @@ $.getJSON('/LabelAppend',function(data){
                $.each(Label_List, function(index, item) {
                   ltext += "<div class ='label' id ='" +item.Id +"' style ='top :"+item.Top+"; left:"+item.Left+";'>";
                   ltext += item.Name;
-                  ltext += "</div>";
+                  ltext += "</div></div><p>&nbsp;</p>";
                });
 
                   $('body').append(ltext);
 
                $('.label').draggable({
-                  grid : [205, 140]
+//                  grid : [205, 140]
                });
    });
 
