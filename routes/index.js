@@ -822,28 +822,20 @@ router.post('/addprojectmember',function(req ,res) {
   var db = req.db;
   var Project_Id = req.body.Project_Id;
   var Member_Email = req.body.Member_Email;
-  var User_Pass = req.body.User_Pass;
-  var User_Email = req.body.User_Email;
-  var Project = db.get("Project");
   var Project_Member = db.get("Project_Member");
   var User = db.get("User");
-  console.log(User_Email);
-  console.log(Member_Email);
-  User.findOne({ "User_Email" : User_Email, "User_Pass" : User_Pass }, function (err,member) {
-    if(member == null) {
-      console.log('false');
-    }
-    else {
       User.findOne({"User_Email":Member_Email},{"_id":1,"User_Name":1}, function(err, user){
             if(user == null){
               console.log('can not find user');
               res.send({suc:1}); //아이디가 없을떄
             }
             else{ //유저는 찾았다. 
-                Project_Member.findOne({"Member.Member_Id":user._id}, function(err, duplication_User){
+                Project_Member.findOne({"Project_Id":ObjectID(Project_Id),"Member.Member_Id":user._id}, function(err, duplication_User){
+		console.log(duplication_User);
+		console.log('111111111111111111111111111');
               if(duplication_User == null)// 프로젝트에 유저가없음
               {
-                Project_Member.update({"Project_Id":ObjectID(req.body.Project_Id)},{$push:{"Member":{"Member_Id":user._id,"Member_Name":user.User_Name,"Member_Position":"crew","Member_Access":'false',"Member_AppId":user.User_AppId}}}, function(err, addmember){
+                Project_Member.update({"Project_Id":ObjectID(Project_Id)},{$push:{"Member":{"Member_Id":user._id,"Member_Name":user.User_Name,"Member_Position":"crew","Member_Access":'false',"Member_AppId":user.User_AppId}}}, function(err, addmember){
 
                   if(addmember == null){
                     console.log('push membererror');
@@ -854,8 +846,7 @@ router.post('/addprojectmember',function(req ,res) {
                     res.send({suc:2});  //추가할때
                   }
                 });
-              }
-              else
+              } else
               {
                 console.log('이미 해당 프로젝트에 해당유저가 있습니다.');
                 res.send({suc:3});//멤버가 이미있을때
@@ -863,8 +854,6 @@ router.post('/addprojectmember',function(req ,res) {
             });     
             }       
       });
-    }
-  });
 });
 
 router.post('/appregister', function(req, res) {
@@ -955,25 +944,28 @@ router.post('/appaddmemo', function(req, res){
     if (!err) {
       var Project_Member = db.get('Project_Member');
       Project_Member.col.aggregate({$match : {"Project_Id" :ObjectID(Project_Id)}} , {$unwind: '$Member'} , {$match : {"Member.Member_AppId": {"$not" : /null/ } } } ,{$group: {"_id" : '$_id'  , "AppId" : {$push: '$Member.Member_AppId'}}},function(err,app){
-
+	console.log('App length : ' + app.length);
+	for(var i = 0; i <= app.length; i++){
+	console.log('ssssssssssssssssssssssssssssssssssssssssssssss몇번출력되니---------------------------------------');
 	var message = new gcm.Message({
 	  collapseKey: 'PhoneGapDemo',
 	  delayWhileIdle: true,
 	  timeToLive: 3,
 	  data: {
-	    title:"hhhh",
-	    message: "111",
+	    title:'업무가 생성되었습니다',
+	    message: Work_Name,
 	    msgcnt: 3
 	  }
 	});
 	console.log('성공?');
 	var sender = new gcm.Sender('AIzaSyAfFtt6_xASKM6nJMWO70Uh984TTSJ_BOI'); // 구글 프로젝트에 등록한 GCM 서비스에서 만든 server API key를 입력한다.
 	var registrationIds = [];
-	registrationIds.push(AppId); // PhoneGap 프로젝트의 안드로이드 프로젝트에서 획득한 registerID를 입력한다. 이 registerID를 이용하여 안드로이드 디바이스에 푸시를 전송한다.
+	registrationIds.push(app[0].AppId[i]); // PhoneGap 프로젝트의 안드로이드 프로젝트에서 획득한 registerID를 입력한다. 이 registerID를 이용하여 안드로이드 디바이스에 푸시를 전송한다.
 	sender.send(message, registrationIds, 4, function (err, result) {
 	  console.log(result);
 	 console.log(AppId);
 	});
+}
 
 
 
