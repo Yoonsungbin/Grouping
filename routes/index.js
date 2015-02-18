@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-//var io = require('socket.io');
 var fs = require('fs');
 var Time = require('date-utils');
 var ObjectID = require('mongodb').ObjectID;
 var multer  = require('multer');
+var gcm = require('node-gcm');
 /* GET home page. */
 
 /* First Page */
@@ -305,16 +305,6 @@ Project_Work.update({"_id":ObjectID(Work_Id)},{$set:{"Work_Sday":Work_Sday,"Work
 
 
 
-
-
-
-
-
-
-
-
-
-
 router.get('/project', function (req, res) {
   fs.readFile('project.html', function (error, data){
     res.writeHead(200, { 'Content-Type':'text/html' });
@@ -596,24 +586,19 @@ router.post('/up123',function (req, res)  {
 
 /* upload */
 router.post('/upload', function(req,res){
-console.log(req.session);
 router.use(multer({ dest:'./public/files/'+req.session.Project_Id+'/'}));
-
  var path=require('path');
-console.log(req.files);
-
+console.log(path);
+console.log(req.files.drive);
   fs.readFile(req.files.drive.path, function(err, data){
    var dirname = path.resolve(".")+'/public/files/'+req.session.Project_Id+'/';
  //  var dirname = __dirname +'/images/';
     var newPath = dirname + req.files.drive.originalname;
-
+console.log(newPath);
 var db =req.db;
 var File = db.get('File');
-console.log(req.session.Project_Id);
 var today = Date.today().getFullYear()+'-'+Date.today().getMonth()+'-'+Date.today().getDay()+1;
 File.insert({"Project_Id":ObjectID(req.session.Project_Id),"File_Path":newPath,"File_Name":req.files.drive.originalname,"File_Size":req.files.drive.size,"File_Format":req.files.drive.extension,"File_Uploader":req.session.User_Name,"File_Date":today});
-	console.log('new path');
-	console.log(newPath);
     fs.writeFile(newPath, data, function(err){
       if(err){
         res.json("Failed to upload your file");
@@ -657,7 +642,7 @@ File.find({"Project_Id":ObjectID(req.session.Project_Id)}, function(err, data){
 			console.log(' no data ' );
 		} else {
 			console.log('파일 리스트 보여주기 ');
-			console.log(data);
+	//		console.log(data);
 			res.send(data);
 		}
 	});
@@ -681,7 +666,30 @@ router.get('/userlist', function(req, res) {
    res.render('userlist',{"userlist":docs});
  });
 });
+////////////////////////////////////////////////////////
+///////////////////mobile download//////////////////////
 
+router.post('/App_Upload_Capture',function (req, res)  {
+console.log(req.files.file.name);
+var splitpath = req.files.file.name.split("-");
+
+console.log(splitpath);
+ router.use(multer({ dest:'./public/files/'+splitpath[0]+'/'}));
+   fs.readFile(req.files.file.path, function(err, data){
+   var dirname = path.resolve(".")+'/public/files/';
+    var newPath =dirname+splitpath[0]+'/'+splitpath[1];
+
+console.log(newPath);
+
+   fs.writeFile(newPath, data, function(err){
+      if(err) {
+        res.json("Failed to upload your file");
+      } else {
+        res.json("Successfully uploaded your file");
+      }
+    });
+  });
+});
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -693,18 +701,23 @@ router.post('/add', function ( req, res) {
 
   var User_Email = req.body.User_Email;
   var User_Pass = req.body.User_Pass;
+  var AppId = req.body.AppId;
+ // res.session.AppId = AppId;
   console.log(User_Email);
-  console.log(User_Pass);
+  console.log(User_Pass); 
+  console.log(AppId);
   var db=req.db;
-  var collection = db.get('User');
-  collection.findOne({ "User_Email" : User_Email,
+  var User = db.get('User');
+  User.findOne({ "User_Email" : User_Email,
     "User_Pass" : User_Pass
   }, function (err,member) {
     if(member == null) {
       console.log('log in fail');
     }
     else {
-      console.log("aaa");
+      console.log("log in");
+      User.update({"User_Email":User_Email},{$set:{"User_AppId":AppId}});
+console.log(member);
       res.send(member);
     }
   });
@@ -716,6 +729,8 @@ console.log('app Project init');
   var db = req.db;
   var User_Email = req.body.User_Email;
   var User_Pass = req.body.User_Pass;
+  var AppId = req.body.AppId;
+
   console.log('app project add');
 console.log(req.body.User_Id);
 var Project_Member = db.get('Project_Member');
@@ -724,6 +739,7 @@ var Project_Member = db.get('Project_Member');
         }
         else{
           console.log('app memo :');
+	Project_Member.update({"Member.Member_Id":ObjectID(req.body.User_Id)},{$set:{"Member.$.Member_AppId":AppId}});	
         }
         res.send(memo);
       });
@@ -737,6 +753,7 @@ router.post('/appprojectcreate', function(req ,res) {
   var Project_Dday = req.body.Project_Dday;
   var User_Email = req.body.User_Email;
   var User_Name = req.body.User_Name;
+  var AppId = req.body.AppId;
   Project_Db.insert({"Project_Name" : Project_Name, "Project_Dday":Project_Dday}, function (err,data){
     if(data == null){
       console.log('project insert error');
@@ -745,10 +762,37 @@ router.post('/appprojectcreate', function(req ,res) {
       console.log('Project insert success');
       console.log(data._id);
           var Project_Member = db.get("Project_Member");
-          Project_Member.insert({"Project_Id":data._id,"Project_Name":data.Project_Name,"Project_Dday":data.Project_Dday,"Member":[{"Member_Id":User_Id,"Member_Name":User_Name,"Member_Position":'captin',"Member_Access":'false'}]}, function (err, member) {
+          Project_Member.insert({"Project_Id":data._id,"Project_Name":data.Project_Name,"Project_Dday":data.Project_Dday,"Member":[{"Member_Id":User_Id,"Member_Name":User_Name,"Member_Position":'captin',"Member_Access":'false',"Member_AppId":AppId}]}, function (err, member) {
             if(err){
               console.log('Project_Member error');
             } else {
+Project_Member.col.aggregate({$match : {"Project_Id" : data._id}} , {$unwind: '$Member'} , {$match : {"Member.Member_AppId": {"$not" : /null/ } } } ,{$group: {"_id" : '$_id'  , "AppId" : {$push: '$Member.Member_AppId'}}},function(err,app){
+	console.log('member appid 가져오기 ');
+	console.log(app);
+
+
+});
+// create a message with default values
+var message = new gcm.Message();
+
+// or with object values
+var message = new gcm.Message({
+  collapseKey: 'PhoneGapDemo',
+  delayWhileIdle: true,
+  timeToLive: 3,
+  data: {
+    title:data.Project_Name,
+    message: data.Project_Dday,
+    msgcnt: 3
+  }
+});
+console.log('성공?');
+var sender = new gcm.Sender('AIzaSyAfFtt6_xASKM6nJMWO70Uh984TTSJ_BOI'); // 구글 프로젝트에 등록한 GCM 서비스에서 만든 server API key를 입력한다.
+var registrationIds = [];
+registrationIds.push(AppId); // PhoneGap 프로젝트의 안드로이드 프로젝트에서 획득한 registerID를 입력한다. 이 registerID를 이용하여 안드로이드 디바이스에 푸시를 전송한다.
+sender.send(message, registrationIds, 4, function (err, result) {
+  console.log(result);
+});
               console.log('Project_Member insert success');
               res.send(member);
             }
@@ -863,11 +907,6 @@ router.post('/appregister', function(req, res) {
   var User_Name = req.body.User_Name;
   var User_Email = req.body.User_Email;
   var User_Pass = req.body.User_Pass;
-  console.log('app register');
-  console.log(User_Name);
-  console.log(User_Email);
-  console.log(User_Pass);
-  console.log();
   // Set our collection
   var collection = db.get('User');
   // Submit to the DB
@@ -967,10 +1006,9 @@ router.post('/appaddmemo', function(req, res){
   var Work_Dday = req.body.Work_Dday;
   var Work_Finish = req.body.Work_Finish;
   var Work_Person = JSON.parse(req.body.Work_Person);
-
+  var AppId = req.body.AppId;
   var db = req.db;
   var Project_Work = db.get('Project_Work');
-  var User_Db = db.get("User");
   console.log('appaddmemo DB에 추가 시작');
       console.log('_id와 User_Id 가 매칭이 됐다');
         Project_Work.insert({
@@ -983,6 +1021,43 @@ router.post('/appaddmemo', function(req, res){
           "Work_Person": Work_Person
         }, function (err, data) {
           if (!err) {
+
+
+
+console.log('메모 생~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~성');
+console.log(AppId);
+var Project_Member = db.get('Project_Member');
+Project_Member.col.aggregate({$match : {"Project_Id" :ObjectID(Project_Id)}} , {$unwind: '$Member'} , {$match : {"Member.Member_AppId": {"$not" : /null/ } } } ,{$group: {"_id" : '$_id'  , "AppId" : {$push: '$Member.Member_AppId'}}},function(err,app){
+        console.log('member appid 가져오기 ');
+        console.log(app);
+
+
+});
+var message = new gcm.Message();
+
+// or with object values
+var message = new gcm.Message({
+  collapseKey: 'PhoneGapDemo',
+  delayWhileIdle: true,
+  timeToLive: 3,
+  data: {
+    title:'업무가 추가되었습니다',
+    message: Work_Name,
+    msgcnt: 3
+  }
+});
+console.log('성공?');
+var sender = new gcm.Sender('AIzaSyAfFtt6_xASKM6nJMWO70Uh984TTSJ_BOI'); // 구글 프로젝트에 등록한 GCM 서비스에서 만든 server API key를 입력한다.
+var registrationIds = [];
+registrationIds.push(AppId); // PhoneGap 프로젝트의 안드로이드 프로젝트에서 획득한 registerID를 입력한다. 이 registerID를 이용하여 안드로이드 디바이스에 푸시를 전송한다.
+sender.send(message, registrationIds, 4, function (err, result) {
+  console.log(result);
+});
+
+
+
+
+
             res.send(data);
           }
         });
@@ -1064,20 +1139,11 @@ router.post('/appgetprojectmember', function(req, res){
  var db = req.db;
 
 var Project_Member = db.get('Project_Member');
-console.log('appgetprojectmember 진입');
-console.log(ObjectID(Project_Id));
-Project_Member.find({"Project_Id":ObjectID(Project_Id)}, function(err, data){
-  if(err){
-    console.log('data가없음');
-  }
-  else{
     Project_Member.col.aggregate({$match:{"Project_Id":ObjectID(Project_Id)}},{$unwind:'$Member'},{$group:{"_id":'$_id',"In_Member":{$push:'$Member.Member_Name'}}}, function (err, member) {
      console.log('찾음');
      console.log(member);
      res.send(member);
    });
-  }
-});
 });
 
 router.post('/appaddcomment', function(req, res){

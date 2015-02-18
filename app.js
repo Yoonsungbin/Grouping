@@ -59,11 +59,8 @@ app.use(function(req,res,next){
   req.db = db;
   next();
 });
-console.log('세션');
-console.log(sss);
-
-app.use(multer({ dest:'./public/',rename: function(fieldname,filename){
-  return filename;
+app.use(multer({ dest:'/public/',rename: function(fieldname,filename){
+ return filename;
 }}));
 
 app.use('/', routes);
@@ -108,7 +105,8 @@ console.log('조인됫다');
         sockets.set('room', objectId);
         sockets.get('room', function (err, room) {
 		console.log(room);
-
+////////////////////////////////////////////////////////////
+////////////////////////접속상태////////////////////////////
 
             Project_Member.col.aggregate({$match:{"Project_Id":objectId}},{$unwind:'$Member'},{$match:{"Member.Member_Access":'true'}},{$group:{"_id":'$_id',"Access_Member":{$push:'$Member.Member_Name'}}}, function (err, member) {
 		console.log('접속해있는사람명단');
@@ -117,7 +115,10 @@ console.log('조인됫다');
             });
 
 Project_Member.findOne({"Project_Id":objectId,"Member.Member_Access":'false'},function(err,mem){
+	console.log('접속안한사람 멤버찾기');
+	console.log(mem);
 	if(mem == null ) {
+	console.log('null 이어서 들어왓습니다');
 	                io.sockets.in(room).emit('Disconnect_Member', mem);
  	} else {
 	console.log(mem);
@@ -127,7 +128,7 @@ Project_Member.findOne({"Project_Id":objectId,"Member.Member_Access":'false'},fu
 	console.log('ddddd');
 	console.log(member);
 	                io.sockets.in(room).emit('Disconnect_Member', member);
-}
+	}
             });
 	}
   });
@@ -160,6 +161,8 @@ Project_Member.findOne({"Project_Id":objectId,"Member.Member_Access":'false'},fu
 
     socket.on('getmessage', function (msg) {
         sockets.get('room', function (err, room) {
+		console.log('message??');
+		console.log(msg);
 	       Project_Message.insert({"Project_Id":room, "Chat": {"Member":msg.User_Name, "Message":msg.message,"Time":msg.Time}}, function(err, data){
                 if(err){
                     conole.log('메시지 저장 에러');
@@ -189,8 +192,13 @@ Project_Member.findOne({"Project_Id":objectId,"Member.Member_Access":'false'},fu
 //                io.sockets.in(room).emit('Disconnect_Member', mem);
 //	} else {
             Project_Member.col.aggregate({$match:{"Project_Id":room}},{$unwind:'$Member'},{$match:{"Member.Member_Access":'false'}},{$group:{"_id":'$_id',"Access_Member":{$push:'$Member.Member_Name'}}}, function (err, member) {
+	console.log('?????????????????????????????????????');
+	console.log(member);
 	if(member == null ){
+	console.log('a');
+                io.sockets.in(room).emit('Disconnect_Member', member);
 	} else {
+	console.log('b');
                 io.sockets.in(room).emit('Disconnect_Member', member);
 }
                 console.log('Disconnect_Member멤버보내기완료');

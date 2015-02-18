@@ -33,6 +33,7 @@ function prepare(view){
 			thumbnail += "<span><img class='big " + item.icon + "'><br>" + item.name + "</span>";
 			fileId++;
 		});
+
 		list += "</table>";
 		
 		// 보기 형식에 따라 내용을 출력합니다

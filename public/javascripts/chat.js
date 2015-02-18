@@ -13,6 +13,8 @@
 	
    socket.on('putgreet', function(msg){
      $('#messages').append($('<h4 align="center">').text(msg));
+var scr = document.getElementById('messages');
+  scr.scrollTop = scr.scrollHeight;
    });
       //접속한 사람을 알기위한 함수 
       socket.on('Connect_Member', function(data){                
@@ -21,21 +23,17 @@
 	} else {
         var Connect_List = [];
         var Connect_Dataform = JSON.stringify(data);
-//	alert(Connect_Dataform);
         var Connect_User = '';               
         var Connect = JSON.parse(Connect_Dataform);
         var count = Connect[0].Access_Member.length;
-//	alert(count);
-//	alert(Connect);
-//	alert(Connect[0].Access_Member[0]);
         for( var i =0;i<count;i++){
          Connect_List.push({'user' : Connect[0].Access_Member[i]});
         }                     
         $.each(Connect_List, function(index, item){
           Connect_User += "<li><span>●</span>"  +item.user + "</li>"; 
         });
-        $('#access_user').empty();
-        $('#access_user').append(Connect_User);
+        $('#online_mem').empty();
+        $('#online_mem').append(Connect_User);
         Connect_User = '';
         Connect_List = '';
 	}
@@ -60,11 +58,11 @@
       DisConnect_User += "<li><span>●</span>"  +item.user + "</li>"; 
     });
 
-    $('#nonaccess_user').empty();
-    $('#nonaccess_user').append(DisConnect_User);
+}
+    $('#offline_mem').empty();
+    $('#offline_mem').append(DisConnect_User);
     DisConnect_User = '';
     DisConnect_List = '';
-}
   });
 //DB에서 채팅가져오기
 socket.on('premessage',function(data) {
@@ -86,35 +84,38 @@ if(data.NewJoin == User_Name){
   $('#messages').append(text);
 }
 }
-var el = document.getElementById('messages');
-el.scrollIntoView(false);
+var scr = document.getElementById('messages');
+  scr.scrollTop = scr.scrollHeight;
 });
 
   socket.on('putmessage',function(data) {
    if (data.User_Name == User_Name) {
     var text = '';
-    text += "<div style ='width:70%'>";
-    text += "<span style='display:inline-block; .display:inline; float: right; border: 1px solid blue; margin:auto width:auto'>" + data.message + "</span>";
-    text += "<span style='display:inline-block; .display:inline; float: right; margin:auto width:auto'><sub>" + data.Time + "</sub></span>";
-    text += "</div><p>&nbsp;</p>";
+  text += "<div class = 'my'>";
+  text += "<div class = 'msg'>"+ data.message+ "</div>";
+  text += "<div class ='time'>" + data.Time+ "</div>";
+  text += "</div><p>&nbsp;</p>";
     $('#messages').append(text);
 
   } else {
     var text = '';
-    text += "<div style ='width:70%'>";
-    text += "<span style='display:inline-block; .display:inline; float: left; border: 1px solid red; margin:auto width:auto;'>"   + data.User_Name+ ':' + "</span>";
-    text += "<span style='display:inline-block; .display:inline; float: left; border: 1px solid red; margin:auto width:auto;'>"+ data.message+ "  </span>";
-    text += "<span style='display:inline-block; .display:inline; float: left; margin:auto width:auto;'><sub>"+ data.Time + "</sub></span>";
-    text += "</div><p>&nbsp;</p>";
+  text += "<div class='your'>";
+  text += "<div class = 'member'>"+ data.User_Name + "</div>";
+  text += "<div class = 'msg'>" + data.message + "</div>";
+  text += "<div class = 'time'>"+ data.Time + "</div>";
+  text += "</div><p>&nbsp;</p>";
     $('#messages').append(text);
   }
-  var el = document.getElementById('messages');
-  el.scrollIntoView(false);
+  
+  var scr = document.getElementById('messages');
+  scr.scrollTop = scr.scrollHeight;
+
 });
 //메세지 보내기 버튼
 $('form').submit(function(){
  var message =$('#m').val();
- var current_time = Time.getHours() + ":" + Time.getMinutes();
+var time = new Date();
+ var current_time = time.getHours() + ":" + time.getMinutes();
  socket.emit('getmessage', {
    message: message,
    User_Name:User_Name,

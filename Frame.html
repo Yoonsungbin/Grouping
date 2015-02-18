@@ -26,7 +26,7 @@
       
       <script type="text/javascript">
          function iFrameLoad(page_num){
-            var page_src = $('#iframe').src;
+		var page_src = document.getElementById('iframe').src;
             switch(page_num){
                case 0: page_src = Task; break;
                case 1: page_src = Calendar; break;
@@ -35,12 +35,15 @@
                case 4: page_src = Vote; break;
             }
          }   // iframe page load
-         
-         function MemberPopUp(){
-            var popUrl = "/MemberPopUp";
-            var popOption = "width=350, height=150, resizable=no, left=middle, top=middle";
-            window.open(popUrl, "", popOption);
-         }
+
+
+		  function MemberPopUp(){
+ 		        var popUrl = "/MemberPopUp";
+                        //팝업창에 출력될 페이지 URL
+                        var popOption = "width=350, height=150, resizable=no, left=middle, top=middle";
+                        //팝업창 옵션(optoin)
+                        window.open(popUrl, "", popOption);
+        	}
       </script>
 
    </head>
@@ -49,11 +52,11 @@
       <div class="sidebar">
          <h1>Grouping</h1>
          <ul class="menu">
-            <li><a name="Task" onclick="iFrameLoad(0); return flase"> <span>할 일</span> </a></li>
-            <li><a name="Calendar" onclick="iFrameLoad(1); return flase"> <span>일정</span></a></li>
-            <li><a name="Mindmap" onclick="iFrameLoad(2); return flase"> <span>마인드맵</span> </a></li>
-            <li><a name="File_Share" onclick="iFrameLoad(3); return flase"> <span>파일공유</span> </a></li>
-            <li><a name="Vote" onclick="iFrameLoad(4); return flase"> <span>부가기능</span> </a></li>
+            <li><a href="Task" target="cwindow" onclick="iFrameLoad(0); return flase"> <span>할 일</span> </a></li>
+            <li><a href="Calendar" target="cwindow" onclick="iFrameLoad(1); return flase"> <span>일정</span></a></li>
+            <li><a href="Mindmap" target="cwindow" onclick="iFrameLoad(2); return flase"> <span>마인드맵</span> </a></li>
+            <li><a href="File_Share" target="cwindow" onclick="iFrameLoad(3); return flase"> <span>파일공유</span> </a></li>
+            <li><a href="Vote" target="cwindow" onclick="iFrameLoad(4); return flase"> <span>부가기능</span> </a></li>
          </ul>   
          <div id="menu_fix">
             <ul id="submenu" class="menu">
@@ -65,19 +68,18 @@
       </div>
       
       <div>
-         <iframe id="iframe" src=""></iframe>
+         <iframe id="iframe" src="" name="cwindow"></iframe>
       </div>
       
       <div id="mem_chat">
          <div id="mem" data-position="right"data-position-fixed="true" data-display="push">
-            <h4>프로젝트에 참여중인 사람</h4>
-            <ul id="online_mem"></ul>   
-            <ul id="offline_mem"></ul>   
-            <button id="MemberAddButton">
-               멤버 초대하기
-            </button>
-         </div>
-         
+         참여중인 멤버
+				<button id="MemberAddButton" href="javascript:void();" onclick="MemberPopUp();">+</button>
+				<div id="mem_list">
+					<ul id="online_mem"></ul>	
+					<ul id="offline_mem"></ul>
+				</div>
+			</div>
          <div id="chat">
             <div id="messages">
             </div>
