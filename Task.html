@@ -16,135 +16,209 @@
       <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
       <link rel="shortcut icon" href="/favicon.ico">
       <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-      <link rel="stylesheet" href="../stylesheets/Task.css">	
+      <link rel="stylesheet" href="../stylesheets/Task.css">
       <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/css/bootstrap.min.css">
       <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
       <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-wip/js/bootstrap.min.js"></script>
       <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
       <script src="../javascripts/Task.js"></script>
+<script>
 
-</head>
+</script>
 
-<body>
-   <button class="new">
-      <a data-toggle="modal" href="#myModal" >new</a>
-   </button>
-   <button class="addlabel">
-      <a data-toggle="modal" href="#labelModal" >label</a>
-   </button>
 
-   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-         <div class="modal-content">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                  &times;
-               </button>
-               <h4 class="modal-title">해야 할 일 추가 하기</h4>
-            </div>
-            <div class="modal-body">
-               <div id="memo_form">
-                  <form id="TaskAddModal" name="Task_Add" method="post" action="/TaskNewAdd">
+   <body>
+
+      <button class="new">
+         new</a>
+      </button>
+      <button class="addlabel">
+         <a data-toggle="modal" href="#labelModal" >label</a>
+      </button>
+
+     
+      <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                     &times;
+                  </button>
+                  <h4 class="modal-title">해야 할 일 추가 하기</h4>
+               </div>
+               <div class="modal-body">
+                  <div id="memo_form">
                      업무
-                     <input type="text" name="Task_Name">
+                     <input type="text" id="Task_Name">
+                     <br>
+                     시작일
+                     <input type="date" id="Task_Sday">
                      <br>
                      마감일
-                     <input type="date" name="Task_Dday">
-                     <br>
-                     담당자
-                     <input type="text" name="Task_Person">
+                     <input type="date" id="Task_Dday">
                      <br>
                      참여자
-                     <label class="checkbox-inline"> <table id="join_member"></table> <select multiple="multiple"></select> </label>
+                     <div id="memberlist">
+                        <div id="plz" multiple="multiple"></div>
+                     </div>
                      <br>
                      메모
-                     <input type="text" name="Task_Memo">
+                     <input type="text" id="Task_Memo">
                      <br>
-                     <input type = "submit" value ="메모 추가" >
-                  </form>
-               </div>
-            </div>
-            <div>
-               <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">
-                     닫기
-                  </button>
-                  <button type="button" id="my_save_btn" class="btn btn-primary" data-dismiss="modal">
-                     저장
-                  </button>
-               </div>
-            </div>
-         </div><!--/.modal-content-->
-      </div><!--/.modal-dialog-->
-   </div><!--/.modal-->
-
-   <!------------------- task modal ------------------>
-   <div class="modal fade" id="taskModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-         <div class="modal-content">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                  &times;
-               </button>
-               <div class="modal-title">
-                  할 일
-                  <button a data-toggle="modal" href="#" type="button" id="save_btn" id="edit" class="btn btn-primary">
-                     수정
-                  </button>
-               </div>
-            </div>
-            <div class="modal-body">
-               <table id="bb"></table>
-               <div class='tg-list-item'>
-                  <input class='tgl tgl-flip' id='cb5' type='checkbox'>
-                  <label class='tgl-btn' data-tg-off='완료' data-tg-on='진행중!' for='cb5'></label>
-               </div>
-            </div>
-            <div>
-               <div class="modal-footer">
-                  <div id="comment_form">
-                     <input type="text" id="comment" placeholder="댓글을 입력하세요...">
-                     <input type="submit" id="comment_submit" value="입력">
+                  </div>
+	       </div>
+	       <div> 
+	 	  <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">
+                        닫기
+                     </button>
+                     <button type="submit" id="my_save_btn" class="btn btn-primary" data-dismiss="modal">
+                        저장
+                     </button>
                   </div>
                </div>
-            </div>
-         </div><!--/.modal-content-->
-      </div><!--/.modal-dialog-->
-   </div><!--/.modal-->
-
-   <!--------------------------label modal-------------------------->
-   <div class="modal fade" id="labelModal" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog">
-         <div class="modal-content">
-            <div class="modal-header">
-               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                  &times;
-               </button>
-               <h4 class="modal-title">라벨 추가 하기</h4>
-            </div>
-            <div class="modal-body">
-               <div id="lebel_form">
-		<form id="labeladd" name="labeladdt" method="POST" action="/LabelAdd">
-                  라벨이름
-                  <input type="text" id="textarea" name="Label_Name">
-                  <br>
-		<input type="submit" value="라벨추가">
-		</form>
-               </div>
-            </div>
-            <div>
-               <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">
-                     닫기
+            </div><!--/.modal-content-->
+         </div><!--/.modal-dialog-->
+      </div><!--/.modal-->
+      
+      <div class="modal fade" id="TaskModal" tabindex="-1" role="dialog" aria-labelledby="TaskModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                     &times;
                   </button>
-                  <button type="button" id="label_save_btn" class="btn btn-primary" data-dismiss="modal">
-                     저장
-                  </button>
+                  <div class="modal-title">
+                     할 일
+                     <button a data-toggle="modal" href="#editModal" type="button" id="editbtn" class="btn btn-primary">
+                        수정
+                     </button>
+                  </div>
                </div>
-            </div>
+               <div class="modal-body">
+                  <div id="bb"></div>
+               </div>
+               <div>
+                  <div class="modal-footer">
+                     <div id="show_comment"></div>
+                     <div id="comment_form">
+                        <textarea name="comment" id="comment" placeholder="댓글을 입력하세요..." ></textarea>
+                        <input type="submit" id="comment_submit" value="submit">
+                     </div>
+                  </div>
+               </div>
+            </div><!--/.modal-content-->
+         </div><!--/.modal-dialog-->
+      </div><!--/.modal-->
 
-         </div><!--/.modal-content-->
-      </div><!--/.modal-dialog-->
-   </div><!--/.modal-->
-</body>
+      
+	<div class="modal fade" id="labelModal" tabindex="-1" role="dialog" aria-labelledby="labelModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                     &times;
+                  </button>
+                  <h4 class="modal-title">라벨 추가 하기</h4>
+               </div>
+               <div class="modal-body">
+                  <div id="lebel_form">
+                     라벨이름
+                     <input type="text" id="Label_Name">
+                     <br>
+                  </div>
+               </div>
+               <div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">
+                        닫기
+                     </button>
+                     <button type="button" id="label_save_btn" class="btn btn-primary" data-dismiss="modal">
+                        저장
+                     </button>
+                  </div>
+               </div>
+            </div><!--/.modal-content-->
+         </div><!--/.modal-dialog-->
+      </div><!--/.modal-->
+     
+      <div class="modal fade" id="editlabelModal" tabindex="-1" role="dialog" aria-labelledby="editlabelModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                     &times;
+                  </button>
+                  <h4 class="modal-title">라벨 수정 하기</h4>
+               </div>
+               <div class="modal-body">
+                  <div id="lebel_form">
+                     라벨이름
+                     <input type="text" id="Label_Name1">
+                     <br>
+                  </div>
+               </div>
+               <div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">
+                        닫기
+                     </button>
+                     <button type="submit" id="LabelModifyBtn" class="btn btn-primary" data-dismiss="modal">
+                        저장
+                     </button>
+                  </div>
+               </div>
+            </div><!--/.modal-content-->
+         </div><!--/.modal-dialog-->
+      </div><!--/.modal-->
+
+	 <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                     &times;
+                  </button>
+                  <h4 class="modal-title">해야 할 일 수정 하기</h4>
+               </div>
+               <div class="modal-body">
+                  <div id="memo_form">
+                     업무
+                     <input type="text" id="Modify_Name">
+                     <br>
+                     시작일
+                     <input type="date" id="Modify_Sday">
+                     <br>
+                     마감일
+                     <input type="date" id="Modify_Dday">
+                     <br>
+                     참여자
+                     <div id="memberlist1">
+                        <div id="meml" multiple="multiple"></div>
+                     </div>
+                     <br>
+                     메모
+                     <input type="text" id="Modify_Memo">
+                     <br>
+                     <div class='tg-list-item'>
+			<input class='tgl tgl-flip' id='Modify_Finish' type='checkbox'>
+                        <label class='tgl-btn' data-tg-off='완료' data-tg-on='진행중!' for='Modify_Finish'></label>
+                     </div>
+                  </div>
+               </div>
+               <div>
+                  <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">
+                        닫기
+                     </button>
+                     <button type="button" id="TaskModifyBtn" class="btn btn-primary" data-dismiss="modal">
+                        수정
+                     </button>
+                  </div>
+               </div>
+            </div><!--/.modal-content-->
+         </div><!--/.modal-dialog-->
+      </div><!--/.modal-->
+
+   </body>
 </html>

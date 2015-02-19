@@ -33,19 +33,19 @@
             width: 175px;
             height: 70px;
             padding: 0px;
+            background: #fccd4c;
          }
          .label .label-content {
             width: 175px;
             height: 25px;
-            background: #264053;
             box-shadow: 3px 3px 5px #aaa;
             border-radius: 5px;
          }
          .card {
             position: absolute !important;
             width: 175px;
-            height: 70        + var(height) px;
-            background: #ecf0f1;
+            height: 70                  + var(height) px;
+            background: #fccd4c;
             box-shadow: 3px 3px 5px #aaa;
             border-radius: 5px;
          }

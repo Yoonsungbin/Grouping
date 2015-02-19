@@ -7,6 +7,32 @@ var multer  = require('multer');
 var gcm = require('node-gcm');
 var path = require('path');
 /* GET home page. */
+router.post('/InitTaskData',function(req,res){
+	var db = req.db;
+	var Work_Id = req.body.Work_Id;
+	var Project_Work = db.get('Project_Work');
+
+	Project_Work.findOne({"_id":ObjectID(Work_Id)}, function(err, data) {
+		if(data == null ) {
+
+		} else {
+			console.log(data);
+			res.send(data);
+		}
+	});
+});
+
+router.get('/GetMemberList',function(req,res){
+	var db = req.db;
+	var Project_Member = db.get('Project_Member');
+Project_Member.col.aggregate({$match:{"Project_Id":ObjectID(req.session.Project_Id)}},{$unwind:'$Member'},{$group:{"_id":'$_id',"Member_Name":{$push:'$Member.Member_Name'},"Member_Id":{$push:'$Member.Member_Id'}}}, function (err, member) {
+     console.log('찾음');
+     console.log(member);
+	res.send(member);
+   });
+});         
+
+
 
 /* First Page */
 router.get('/', function (req, res) {
@@ -92,28 +118,21 @@ router.get('/Task', function (req, res) {
 router.post('/TaskNewAdd',function (req,res) {
   console.log('업무추가버튼클릭하고 들어옴');
   var db = req.db;
-  var Task_Name = req.body.Task_Name;
-  var Task_Dday = req.body.Task_Dday;
-  var Task_Person = req.body.Task_Person;
-  var Task_Memo = req.body.Task_Memo;
+  var Task_Name = req.body.Name;
+  var Task_Sday = req.body.Sday;
+  var Task_Dday = req.body.Dday;
+  var Task_Person = req.body.Work_Person;
+  var Person =JSON.parse(Task_Person);
+  var Task_Memo = req.body.Memo;
   var Project_Work = db.get('Project_Work');
-  console.log(req.body.Task_Name);
-  console.log(req.body.Task_Dday);
-  console.log(req.body.Task_Memo);
-  var Work_Person = new Array();
-  var UserInfo = new Object();
-  UserInfo.User_Name=req.session.User_Name;
-  UserInfo.User_Email = req.session.User_Email;
-  Work_Person.push(UserInfo);
-  var dataform = JSON.stringify(Work_Person);
-  var Person =JSON.parse(dataform);
 
-  Project_Work.insert({"Project_Id":ObjectID(req.session.Project_Id),"Work_Name":Task_Name,"Work_Dday":Task_Dday,"Work_Memo":Task_Memo,"Work_Finish":'ing',"Work_Top":'480px',"Work_Left":'30px',"Work_Person" :Person} ,function(err,data){
+  Project_Work.insert({"Project_Id":ObjectID(req.session.Project_Id),"Work_Name":Task_Name,"Work_Sday":Task_Sday,"Work_Dday":Task_Dday,"Work_Memo":Task_Memo,"Work_Finish":'on',"Work_Top":'480px',"Work_Left":'30px',"Work_Person" :Person} ,function(err,data){
     if(data  == null){
       console.log('업무삽입실패')
     } else {
      console.log('업무삽입되었음');
-     res.redirect("Task");
+	res.send({suc:"suc"});
+ //    res.redirect("Task");
    }
  });
 });
@@ -147,11 +166,26 @@ router.post('/Get_TaskData',function(req,res){
 
 /*dbclick Task Update */
 router.post('/Update_TaskData',function(req,res){
-  console.log('더블클릭햇을때 데이터 업로드');
+	console.log(' 메모 업데이트 입니다 ');
+
   var Work_Id = req.body.Work_Id;
+  var Name = req.body.Name;
+  var Sday = req.body.Sday;
+  var Dday = req.body.Dday;
+  var Memo = req.body.Memo;
+//  var Finish = req.body.Finish;
+  var Task_Person = req.body.Work_Person;
+  var Person =JSON.parse(Task_Person);
   var db = req.db;
+console.log(Work_Id);
+console.log(Name);
+console.log(Sday);
+console.log(Dday);
+console.log(Memo);
+console.log(Person);
   var Project_Work = db.get('Project_Work');
   var Work_Comment = db.get('Work_Comment');
+Project_Work.update({"_id":ObjectID(Work_Id)},{$set:{"Work_Name":Name,"Work_Sday":Sday,"Work_Dday":Dday,"Work_Person":Person,"Work_Memo":Memo}});
   Project_Work.findOne({"_id":ObjectID(Work_Id)},function(err,data){
     if(data == null){
       console.log('no id');
@@ -186,9 +220,11 @@ router.get('/LabelAppend',function(req,res){
 });
 });
 /* Lavel add */
-router.post('/LabelAdd',function(req,res){
+router.post('/LabelNewAdd',function(req,res){
+	console.log('라벨을 추가합시다');
  var db = req.db;
  var Label_Name = req.body.Label_Name;
+ console.log(Label_Name);
  var Label = db.get('Project_Work_Label');
 
  Label.insert({"Project_Id":ObjectID(req.session.Project_Id),"Label_Name":Label_Name,"Label_Top":'440px',"Label_Left":'30px'},function(err,data){
@@ -196,7 +232,7 @@ router.post('/LabelAdd',function(req,res){
 
    }  else {
     console.log(data);
-    res.redirect("Task");
+	res.send({suc:'suc'});
   }
 });
 });
@@ -214,17 +250,12 @@ router.post('/Get_LabelData',function(req,res){
 /*dbclick Label Update */
 router.post('/Update_LabelData',function(req,res){
   console.log('더블클릭햇을때라벨 업로드');
-  var Work_Id = req.body.Work_Id;
+  var Label_Id = req.body.Work_Id;
+  var Label_Name =req.body.Label_Name;
   var db = req.db;
   var Label = db.get('Project_Work_Label');
-  Label.findOne({"_id":ObjectID(Work_Id)},function(err,data){
-    if(data == null){
-      console.log('no id');
-    } else {
-     console.log(data);
-     res.send(data);
-   }
- });
+  Label.update({"_id":ObjectID(Label_Id)},{$set : {"Label_Name":Label_Name}});
+	res.send({suc:"suc"});
 });
 
 
