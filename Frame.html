@@ -35,8 +35,6 @@
                case 4: page_src = Vote; break;
             }
          }   // iframe page load
-
-
 		  function MemberPopUp(){
  		        var popUrl = "/MemberPopUp";
                         //팝업창에 출력될 페이지 URL
@@ -50,7 +48,7 @@
 
    <body>
       <div class="sidebar">
-         <h1>Grouping</h1>
+         <a href="Project">그루핑</a>
          <ul class="menu">
             <li><a href="Task" target="cwindow" onclick="iFrameLoad(0); return flase"> <span>할 일</span> </a></li>
             <li><a href="Calendar" target="cwindow" onclick="iFrameLoad(1); return flase"> <span>일정</span></a></li>
@@ -60,15 +58,15 @@
          </ul>   
          <div id="menu_fix">
             <ul id="submenu" class="menu">
-               <li><a name="info" href="#"> <span>내 정보</span> </a></li>
+               <li><a name="info" href="Mypage"> <span>내 정보</span> </a></li>
                <li><a name="community" href="#"> <span>커뮤니티</span> </a></li>
                <li><a name="logout" href="/"> <span>로그아웃</span> </a></li>
             </ul>
          </div>
       </div>
       
-      <div>
-         <iframe id="iframe" src="" name="cwindow"></iframe>
+      <div id="iframediv">
+         <iframe id="iframe" src="Task" name="cwindow"></iframe>
       </div>
       
       <div id="mem_chat">

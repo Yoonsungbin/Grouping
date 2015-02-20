@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>내 정보</title>
+		<meta name="description" content="">
+		<meta name="author" content="PC-164">
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<script src="http://code.jquery.com/jquery-latest.js"></script><script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="../javascripts/Mypage.js"></script>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/Additional_Frame.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/Mypage.css">
+
+	</head>
+
+	<body>
+		<div class="sidebar">
+			<a href="Project">그루핑</a>
+			<div id="menu_fix">
+				<ul id="submenu" class="menu">
+					<li><a name="info" href="Mypage"> <span>내 정보</span> </a></li>
+					<li><a name="community" href="#"> <span>커뮤니티</span> </a></li>
+					<li><a name="logout" href="/"> <span>로그아웃</span> </a></li>
+				</ul>
+			</div>
+		</div>
+		<div id="wrapper">
+			<div id="myinfo">
+				<h3>내 정보</h3>
+				<button id="myinfo_upd_btn" class="btn btn-default">
+					수정하기
+				</button>
+				<div id="namecard">
+					<span id="user_img" > <img src="/DownloadProfile" width=100px height=100px> </span>
+					<span id="user_data"> <div id="user_name"></div> <div id="user_email"></div> <div id="user_contribution"></div> </span>
+				</div>
+				<form action="/MyProfile" method="POST" enctype="multipart/form-data">
+					    <input type="file" name="file" /><br/>
+					    <input type="submit" />
+				</form>
+			</div>
+			<div id="task">
+				<h3>프로젝트에서 해야할 일</h3>
+				<div class="btn-group">
+					<button id="prj_select_btn" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+						프로젝트 선택   <span class="caret"></span>
+					</button>
+					<button id="prj_out_btn" type="button" class="btn btn-default">나가기</button>
+					<ul id="prj_select_list" class="dropdown-menu" role="menu">
+					</ul>
+				</div>
+				<ul id="task_list" class="list-group">
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>
+

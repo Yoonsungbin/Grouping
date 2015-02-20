@@ -12,8 +12,7 @@ router.get('/GetMyList',function(req,res){
 	console.log(req.session.User_Id);
 var db = req.db;
 var Project_Work = db.get('Project_Work');
-//Project_Work.find({"Work_Person.User_Id" :req.session.User_Id}, function(err, data){
-Project_Work.col.aggregate({$match:{"Work_Person.User_Id":req.session.User_Id}},{$unwind:'$Work_Person'},{$match:{"Work_Person.User_Id":req.session.User_Id}},{$group:{"_id":'$Project_Name',"Work_Name":{$push:'$Work_Name'}}},function (err,data){
+Project_Work.find({"Work_Person.User_Id" :req.session.User_Id}, function(err, data){
   if(!err){
     console.log('유저 정보 데이터 보냅니다');	
     console.log(data);
@@ -182,36 +181,12 @@ router.post('/TaskNewAdd',function (req,res) {
   var Person =JSON.parse(Task_Person);
   var Task_Memo = req.body.Memo;
   var Project_Work = db.get('Project_Work');
-var Project_Member=db.get('Project_Member');
+
   Project_Work.insert({"Project_Id":ObjectID(req.session.Project_Id),"Project_Name":req.session.Project_Name,"Work_Name":Task_Name,"Work_Sday":Task_Sday,"Work_Dday":Task_Dday,"Work_Memo":Task_Memo,"Work_Finish":'on',"Work_Top":'480px',"Work_Left":'30px',"Work_Person" :Person} ,function(err,data){
     if(data  == null){
       console.log('업무삽입실패')
     } else {
      console.log('업무삽입되었음');
-      Project_Member.col.aggregate({$match : {"Project_Id" :ObjectID(req.session.Project_Id)}} , {$unwind: '$Member'} , {$match : {"Member.Member_AppId": {"$not" : /null/ } } } ,{$group: {"_id" : '$_id'  , "AppId" : {$push: '$Member.Member_AppId'}}},function(err,app){
-  console.log('App length : ' + app.length);
-  for(var i = 0; i <= app.length; i++){
-  console.log('ssssssssssssssssssssssssssssssssssssssssssssss몇번출력되니---------------------------------------');
-
-  var message = new gcm.Message({
-    collapseKey: 'PhoneGapDemo',
-    delayWhileIdle: true,
-    timeToLive: 3,
-    data: {
-      title:'업무가 생성되었습니다',
-      message: Task_Name,
-      msgcnt: 3
-    }
-  });
-  console.log('성공?');
-  var sender = new gcm.Sender('AIzaSyAfFtt6_xASKM6nJMWO70Uh984TTSJ_BOI'); // 구글 프로젝트에 등록한 GCM 서비스에서 만든 server API key를 입력한다.
-  var registrationIds = [];
-  registrationIds.push(app[0].AppId[i]); 
-  sender.send(message, registrationIds, 4, function (err, result) {
-  });
-}
-       });
-
 	res.send({suc:"suc"});
  //    res.redirect("Task");
    }
@@ -728,8 +703,7 @@ router.post('/upload', function(req,res){
 	console.log(Date.today().getMonth());
 	console.log(Date.today().getDay());
 	console.log(Date.today().getDate());
-	var month = 0 + String(parseInt(Date.today().getMonth())+1);
- var today = Date.today().getFullYear()+'-'+month+'-'+Date.today().getDate();
+ var today = Date.today().getFullYear()+'-'+String(parseInt(Date.today().getMonth())+1)+'-'+String(parseInt(Date.today().getDate())+1);
  File.insert({"Project_Id":ObjectID(req.session.Project_Id),"File_Path":newPath,"File_Name":req.files.drive.originalname,"File_Size":req.files.drive.size,"File_Format":req.files.drive.extension,"File_Uploader":req.session.User_Name,"File_Date":today});
  fs.writeFile(newPath, data, function(err){
   if(err){
@@ -814,22 +788,18 @@ router.post('/MyProfile',function (req, res)  {
       if(err) {
         res.json("사진업로드 실패!");
       } else {
-        //res.json("성공적으로 사진이 업로드 되었습니다.");
-	res.redirect("Mypage");
+        res.json("성공적으로 사진이 업로드 되었습니다.");
       }
     });
   });
 });
 router.get('/DownloadProfile', function (req, res) {
-console.log('down load ');
    var User_Id = req.session.User_Id;
   console.log(path.resolve("."));
-fs.exists(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg',function(exists){
+fs.exists(path.resolve(".")+'/pulic/profilephoto/'+User_Id+'.jpg',function(exists){
 if(exists){
-console.log('존재');
  res.sendFile(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg');
 } else {
-console.log('없음');
 res.sendFile(path.resolve(".")+'/public/profilephoto/default_image.jpg');
 }
 });
@@ -887,7 +857,7 @@ console.log('app user id :' + req.session.App_UserId);
     }
     else{
       console.log('app memo :');
-      Project_Member.update({"Member":{$elemMatch:{"Member_Id":ObjectID(req.body.User_Id)}}},{$set:{"Member.$.Member_AppId":AppId}},{multi:true});  
+      Project_Member.update({"Member":{$elemMatch:{"Member_Id":ObjectID(req.body.User_Id)}}},{$set:{"Member.$.Member_AppId":AppId}},{multi:true});	
     }
     res.send(memo);
   });
@@ -917,7 +887,7 @@ router.post('/appprojectcreate', function(req ,res) {
           Project_Member.col.aggregate({$match : {"Project_Id" : data._id}} , {$unwind: '$Member'} , {$match : {"Member.Member_AppId": {"$not" : /null/ } } } ,{$group: {"_id" : '$_id'  , "AppId" : {$push: '$Member.Member_AppId'}}},function(err,app){
            console.log('member appid 가져오기 ');
            console.log(app);
-    res.send(member);
+	  res.send(member);
          });
         }
       });
@@ -996,8 +966,8 @@ router.post('/addprojectmember',function(req ,res) {
             }
             else{ //유저는 찾았다. 
                 Project_Member.findOne({"Project_Id":ObjectID(Project_Id),"Member.Member_Id":user._id}, function(err, duplication_User){
-    console.log(duplication_User);
-    console.log('111111111111111111111111111');
+		console.log(duplication_User);
+		console.log('111111111111111111111111111');
               if(duplication_User == null)// 프로젝트에 유저가없음
               {
                 Project_Member.update({"Project_Id":ObjectID(Project_Id)},{$push:{"Member":{"Member_Id":user._id,"Member_Name":user.User_Name,"Member_Position":"crew","Member_Access":'false',"Member_AppId":user.User_AppId}}}, function(err, addmember){
@@ -1109,33 +1079,35 @@ router.post('/appaddmemo', function(req, res){
     if (!err) {
       var Project_Member = db.get('Project_Member');
       Project_Member.col.aggregate({$match : {"Project_Id" :ObjectID(Project_Id)}} , {$unwind: '$Member'} , {$match : {"Member.Member_AppId": {"$not" : /null/ } } } ,{$group: {"_id" : '$_id'  , "AppId" : {$push: '$Member.Member_AppId'}}},function(err,app){
-  console.log('App length : ' + app.length);
-  for(var i = 0; i <= app.length; i++){
-  console.log('ssssssssssssssssssssssssssssssssssssssssssssss몇번출력되니---------------------------------------');
- 
-  var message = new gcm.Message({
-    collapseKey: 'PhoneGapDemo',
-    delayWhileIdle: true,
-    timeToLive: 3,
-    data: {
-      title:'업무가 생성되었습니다',
-      message: Work_Name,
-      msgcnt: 3
-    }
-  });
-  console.log('성공?');
-  var sender = new gcm.Sender('AIzaSyAfFtt6_xASKM6nJMWO70Uh984TTSJ_BOI'); // 구글 프로젝트에 등록한 GCM 서비스에서 만든 server API key를 입력한다.
-  var registrationIds = [];
-  registrationIds.push(app[0].AppId[i]); // PhoneGap 프로젝트의 안드로이드 프로젝트에서 획득한 registerID를 입력한다. 이 registerID를 이용하여 안드로이드 디바이스에 푸시를 전송한다.
-  sender.send(message, registrationIds, 4, function (err, result) {
-    console.log(result);
-   console.log(AppId);
-  });
+	console.log('App length : ' + app.length);
+	for(var i = 0; i <= app.length; i++){
+	console.log('ssssssssssssssssssssssssssssssssssssssssssssss몇번출력되니---------------------------------------');
+	var message = new gcm.Message({
+	  collapseKey: 'PhoneGapDemo',
+	  delayWhileIdle: true,
+	  timeToLive: 3,
+	  data: {
+	    title:'업무가 생성되었습니다',
+	    message: Work_Name,
+	    msgcnt: 3
+	  }
+	});
+	console.log('성공?');
+	var sender = new gcm.Sender('AIzaSyAfFtt6_xASKM6nJMWO70Uh984TTSJ_BOI'); // 구글 프로젝트에 등록한 GCM 서비스에서 만든 server API key를 입력한다.
+	var registrationIds = [];
+	registrationIds.push(app[0].AppId[i]); // PhoneGap 프로젝트의 안드로이드 프로젝트에서 획득한 registerID를 입력한다. 이 registerID를 이용하여 안드로이드 디바이스에 푸시를 전송한다.
+	sender.send(message, registrationIds, 4, function (err, result) {
+	  console.log(result);
+	 console.log(AppId);
+	});
 }
-       });
-  res.send(data);
-  }
-  });
+
+
+
+     	 });
+	res.send(data);
+	}
+	});
 });
 
 router.post('/appmodifymemo', function(req, res){
@@ -1336,8 +1308,7 @@ router.post('/GetMyWork', function(req, res){
 var User_Id = req.body.User_Id;
 var db = req.db;
 var Project_Work = db.get('Project_Work');
-var Project = db.get('Project');
-console.log('Mypage에서 보낸 User_Id : '+User_Id);
+console.log('Mypage에서 보낸 User_Email : '+User_Id);
 Project_Work.find({"Work_Person.User_Id" :User_Id}, function(err, data){
   if(!err){
     console.log('유저 정보 데이터 보냅니다');
@@ -1369,9 +1340,9 @@ var File = db.get('File');
 
    fs.writeFile(newPath, data, function(err){
     if(err) {
-      res.redirect("tab_memo.html");
+      res.json("사진업로드 실패!");
     } else {
-      res.redirect("tab_memo.html");
+      res.json("성공적으로 사진이 업로드 되었습니다.");
     }
   });
  });
@@ -1404,36 +1375,15 @@ router.post('/GetProfilePhoto',function (req, res)  {
   console.log('일단 뭐라도 보내볼꼐여');
   console.log(path.resolve("."));
   res.sendFile(path.resolve(".")+'/public/files/'+'User_Id'+'.jpg');
-  
+	
 
 });
 */
 router.get('/MyImage', function (req, res) {
    var User_Id = req.session.App_UserId;
   console.log(path.resolve("."));
-  console.log('파일이')
-  fs.exists(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg', function (exists) {
-  if(exists){
-    res.sendFile(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg');
-  }
-  else
-    res.sendFile(path.resolve(".")+'/public/profilephoto/default_image.jpg');
-
-});  
- 
+  
+ res.sendFile(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg');
 
 }); 
-router.post('/FindId', function(req,res){
-transporter.sendMail({
-  from:"zpzg8586@gmail.com",
-  to:"hero8586@naver.com",
-  subject:"example",
-  text:"success"
-});
-console.log('success');
-
-});
-
-
-
 module.exports = router;

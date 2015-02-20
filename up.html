@@ -2,19 +2,13 @@
 <html>
 <head>
 	<title></title>
- <script src="../javascripts/download.js"></script>
  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
 <body>
-<button type="button" onclick="javascript:location.href='download'">Download</button>
-<form action="up123" method="POST" enctype="multipart/form-data">
-    <input type="file" name="drive" /><br/>
+<form action="/up123" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" /><br/>
     <input type="submit" />
 </form>
 
-
-<div id= "download">
-	<table id = "down"></table>
-</div>
 </body>
 </html>

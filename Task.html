@@ -7,7 +7,7 @@
       Remove this if you use the .htaccess -->
       <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-      <title>ex</title>
+      <title>Task</title>
       <meta name="description" content="">
       <meta name="author" content="sec">
 
@@ -180,6 +180,14 @@
                      &times;
                   </button>
                   <h4 class="modal-title">해야 할 일 수정 하기</h4>
+		 <div class="tog_edit">
+                     <button type="hidden" id="content_btn">
+                        <a href="#" onclick="showID('content_btn_another');">진행중!</a>
+                     </button>
+                     <button id="content_btn_another">
+                        <a href="#" onclick="showID('content_btn');">완료!</a>
+                     </button>
+                  </div>
                </div>
                <div class="modal-body">
                   <div id="memo_form">

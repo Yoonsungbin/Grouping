@@ -11,7 +11,7 @@
             position: absolute;
             top: 5%;
             left: 80%;
-            color: white;
+            color: black;
             margin: 0px 0px 0 0;
             cursor: pointer;
          }
@@ -44,112 +44,19 @@
          .card {
             position: absolute !important;
             width: 175px;
-            height: 70                  + var(height) px;
             background: #fccd4c;
             box-shadow: 3px 3px 5px #aaa;
+            border: 5px solid #689470;
             border-radius: 5px;
+            
          }
          .card .card-content {
             padding: 10px;
-            height: 75px;
             font-size: .9em;
          }
          .card:hover {
             box-shadow: 3px 3px 5px #999;
             cursor: pointer;
-         }
-         .tgl {
-            display: none;
-         }
-         .tgl, .tgl:after, .tgl:before, .tgl *, .tgl *:after, .tgl *:before, .tgl + .tgl-btn {
-            box-sizing: border-box;
-         }
-         .tgl::-moz-selection, .tgl:after::-moz-selection, .tgl:before::-moz-selection, .tgl *::-moz-selection, .tgl *:after::-moz-selection, .tgl *:before::-moz-selection, .tgl + .tgl-btn::-moz-selection {
-            background: none;
-         }
-         .tgl::selection, .tgl:after::selection, .tgl:before::selection, .tgl *::selection, .tgl *:after::selection, .tgl *:before::selection, .tgl + .tgl-btn::selection {
-            background: none;
-         }
-         .tgl + .tgl-btn {
-            outline: 0;
-            display: block;
-            width: 4em;
-            height: 2em;
-            position: relative;
-            cursor: pointer;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-         }
-         .tgl + .tgl-btn:after, .tgl + .tgl-btn:before {
-            position: relative;
-            display: block;
-            content: "";
-            width: 50%;
-            height: 100%;
-         }
-         .tgl + .tgl-btn:after {
-            left: 0;
-         }
-         .tgl + .tgl-btn:before {
-            display: none;
-         }
-         .tgl:checked + .tgl-btn:after {
-            left: 50%;
-         }
-         .tgl-flip + .tgl-btn {
-            padding: 2px;
-            -webkit-transition: all .2s ease;
-            transition: all .2s ease;
-            font-family: sans-serif;
-            -webkit-perspective: 100px;
-            perspective: 100px;
-         }
-         .tgl-flip + .tgl-btn:after, .tgl-flip + .tgl-btn:before {
-            display: inline-block;
-            -webkit-transition: all .4s ease;
-            transition: all .4s ease;
-            width: 100%;
-            text-align: center;
-            position: absolute;
-            line-height: 2em;
-            font-weight: bold;
-            color: #fff;
-            position: absolute;
-            top: 0;
-            left: 0;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            border-radius: 4px;
-         }
-         .tgl-flip + .tgl-btn:after {
-            content: attr(data-tg-on);
-            background: #02C66F;
-            -webkit-transform: rotateY(-180deg);
-            transform: rotateY(-180deg);
-         }
-         .tgl-flip + .tgl-btn:before {
-            background: #FF3A19;
-            content: attr(data-tg-off);
-         }
-         .tgl-flip + .tgl-btn:active:before {
-            -webkit-transform: rotateY(-20deg);
-            transform: rotateY(-20deg);
-         }
-         .tgl-flip:checked + .tgl-btn:before {
-            -webkit-transform: rotateY(180deg);
-            transform: rotateY(180deg);
-         }
-         .tgl-flip:checked + .tgl-btn:after {
-            -webkit-transform: rotateY(0);
-            transform: rotateY(0);
-            left: 0;
-            background: #7FC6A6;
-         }
-         .tgl-flip:checked + .tgl-btn:active:after {
-            -webkit-transform: rotateY(20deg);
-            transform: rotateY(20deg);
          }
          #edit {
             position: absolute;
@@ -160,4 +67,18 @@
          }
          #comment {
             width: 80%;
+         }
+         #content_btn_another {
+            position: absolute;
+            right: 8%;
+            top: 5%;
+            width: 62px;
+            height: 26px;
+         }
+         #content_btn {
+            position: absolute;
+            right: 8%;
+            top: 5%;
+            width: 62px;
+            height: 26px;
          }

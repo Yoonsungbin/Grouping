@@ -24,8 +24,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js" type="text/javascript"></script>
 		<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.6/fullcalendar.min.js"></script>
-
-
+		<script src="../javascripts/Calendar.js"></script>
 		<style>
 			/*breadcrumbs*/
 			.breadcrumb {@include inline-block-list();
@@ -40,7 +39,7 @@
 			}
 
 			/*calendar*/
-			#cal {
+			#calendar {
 				max-width: 900px;
 				margin: 0 auto;
 				position: absolute;
@@ -50,51 +49,14 @@
 				font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
 				font-size: 14px;
 			}
+			.fc-time {
+ 			   display:none;
+			}
 		</style>
 	</head>
-
 	<body>
 		<!-- calendar -->
 		<div id='calendar'></div>
-
-		<script>
-$(document).ready(function() {
-
-    var date = new Date();
-    var d = date.getDate();
-    var m = date.getMonth();
-    var y = date.getFullYear();
-
-    var events_array = [
-        {
-        title: '비트',
-        start: new Date(2015, 1, 20),
-            end : new Date(2015,1,25),
-        tip: 'Personal tip 1'},
-    {
-        title: '배고파',
-        start: new Date(2015, 1, 21),
-            end : new Date(2015,1,25),
-        tip: 'Personal tip 2'}
-    ];
-
-    $('#calendar').fullCalendar({
-        header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay'
-        },
-        selectable: true,
-	editable:true,
-	startEditable:true,
-	durationEditable:true,
-	resizable:true,
-        events: events_array,
-        eventRender: function(event, element) {
-            element.attr('title', event.tip);
-        }
-    });
-});
 		</script>
 	</body>
 </html>

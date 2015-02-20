@@ -41,37 +41,32 @@ function prepare() {
       var text = "";
       $.each(list, function(index, item) {
          // text += "<br><a class='prj' id='" + prjId + "'><br>" + item.title + "<br></a><div class='tt' id='" +btnId+"'><input type ='button' value='나가기'></div>";
-         text += "<div class='prj' id ='"+item.Project_Id+"'><span class='title'>" + item.title + "</span>";
-         text += "<div class='detail'>";
-         text += "<div><span>" + item.duedate + "</span>";
-         text += "<span>" + item.memo + "</span></div>";
-         text += "<div><span>" + item.memo + "</span>";
-         text += "<img class='del' src='../images/delete.png'></div>";
-         text += "</div></div></div>";
+         text += "<div class='prj' id ='"+item.Project_Id+"'>";
+         text += "<img class='del' src='../images/delete.png'>";
+         text += "<span class ='due'>" + item.duedate + "</span>";
+ 	 text += "<span class='title'>" + item.title + "</span>";
+         text += "<div class ='detail'> " + item.memo + "</div>";
+         text += "</div>";
       });
       // 프로젝트 추가 이미지
-      text += "<div class='prj'><a data-toggle='modal' href='#myModal' data-role='add'>";
-      text += "<img id='prj_add' src='../images/prj_add.png'></a></div>";
-      var box = document.getElementById('wrap');
+
+		text += "<div class='prj add'>";
+		text += "<form id='formProjectAdd' name='Project_Add' method='POST' action='/ProjectAdd'>";
+		text += "프로젝트 이름 <input type='text' name='Project_Name' placeholder='띄어쓰기 포함 15자 이내' maxlength='15'>";
+		text += "프로젝트 마감일 <input type='date' name='Project_Dday'>";
+		text += "프로젝트 설명 <input type='text' name='Project_Memo' placeholder='띄어쓰기 포함 40자 이내' maxlength='40'>";
+		text += "<input type='submit' value='프로젝트 시작하기'>";
+		text += "</form>";
+		text += "</div>";
+
+      var box = document.getElementById('content');
       box.innerHTML = text;
+
+
       // prj_list에 text를 덧붙입니다.
    });
 
 
-   $('.prj').mouseover(function() {
-      var box = $(this).children('.detail');
-      var title = $(this).children('.title');
-      box.css('display', 'inline-block');
-      title.css('font-size', '43px');
-      title.css('font-weigth', 'bold');
-   });
-   $('.prj').mouseout(function() {
-      var box = $(this).children('.detail');
-      var title = $(this).children('.title');
-      box.css('display', 'none');
-      title.css('font-size', '24px');
-      title.css('font-weigth', 'normal');
-   });
 }
 // 프로젝트 선택 시
 $(document).on("click", ".title", function() {

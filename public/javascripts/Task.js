@@ -1,3 +1,4 @@
+
 $.getJSON('/TaskAppend', function(data) {
        var dataform = JSON.stringify(data);
 	var temp = JSON.parse(dataform);
@@ -35,8 +36,8 @@ $.getJSON('/TaskAppend', function(data) {
              //  text += "<br>마감일 : " + item.Dday;
                text += "<br>담당자 : " + item.Person;
                text += "<br>내용 : " + item.Memo;
-	       text += "<input class='tgl tgl-flip' id='"+pp+"' type='checkbox'>";
-               text += "<label class='tgl-btn' data-tg-off='완료' data-tg-on='진행중!'for='"+pp+"'></label>";
+	     //  text += "<input class='tgl tgl-flip' id='"+pp+"' type='checkbox'>";
+              // text += "<label class='tgl-btn' data-tg-off='완료' data-tg-on='진행중!'for='"+pp+"'></label>";
                text += "</div>";
                text += "</div><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>";
 		$('#pp').val(item.Finish);
@@ -97,7 +98,7 @@ $(document).on('click', '.new', function() {
 var mem ="";
 //alert(MemberList[0].Name);
       		 $.each(MemberList, function(index, item) {
-      		 	mem += "<input class='chk' type='checkbox' name='"+item.Name+"' value='" + item.Name + "' id='" +item.Id+ "'>" + item.Name+  "<p>&nbsp;</p>";
+      		 	mem += "<input class='chk' type='checkbox' name='"+item.Name+"' value='" + item.Name + "' id='" +item.Id+ "'>" + item.Name;
             	  });
       		var box = document.getElementById('plz');
       		box.innerHTML = mem;
@@ -216,7 +217,7 @@ var DELAY = 500,
 
     var mem ="";
     $.each(MemberList, function(index, item) {
-      mem += "<input class='chk' type='checkbox' name='chec' value='" + item.Name + "' id='" +item.Id+ "'>" + item.Name+  "<p>&nbsp;</p>";
+      mem += "<input class='chk' type='checkbox' name='chec' value='" + item.Name + "' id='" +item.Id+ "'>" + item.Name;
     });
     var bo = document.getElementById('meml');
     bo.innerHTML = mem;
