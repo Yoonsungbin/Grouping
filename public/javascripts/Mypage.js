@@ -18,10 +18,12 @@ $.getJSON('/GetMyList',function(data){
 	var temp = JSON.parse(dataform);
 	var Work_Name = new Array();
 	var Project_Name = [];
+	var Task_Count = new Array();
 	for(var i = 0; i < temp.length; i++) {
 	 Project_Name[i] = temp[i]._id;
 		var form = JSON.stringify(temp[i].Work_Name);
 	        var kk = JSON.parse(form);
+		Task_Count[i] = kk.length;
 		 Work_Name[i] = new Array();
 		for(var j=0 ; j <kk.length ;j++){
 			Work_Name[i][j] = kk[j];
@@ -51,7 +53,7 @@ var dropdown = document.getElementById('prj_select_list');
 		//alert(List[selected].Project_Name);
 		btn_view.innerHTML = List[selected].Project_Name + "   <span class='caret'></span>";
 		var WList = new Array();
-		   for(var j =0 ; j < kk.length ; j++) {
+		   for(var j =0 ; j < Task_Count[selected] ; j++) {
                         WList.push({
                                 'Work_Name' : Work_Name[selected][j]
                         });

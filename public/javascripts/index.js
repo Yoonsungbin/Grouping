@@ -154,33 +154,43 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#btnSubmit').click(function() {
-		var email = document.getElementById("inputUserEmail").value;
-		var name = document.getElementById("inputUserName").value;
-		var password = document.getElementById("inputPassword").value;
-		var repassword = document.getElementById("rePassword").value;
-		alert(password + repassword);
 
-		if (email == "") {
-			alert("이메일을 입력해주세요!");
-			return false;
-		} else if (name == "") {
-			alert("이름을 입력해주세요!");
-			return false;
-		} else if (password == "") {
-			alert("비밀번호를 입력해주세요!");
-			return false;
-		} else if (repassword == "") {
-			alert("비밀번호 확인을 입력해주세요!");
-			return false;
-		} else if (password == repassword) {// 구현되지 않음 수정필요
-			alert("가입되었습니다!");
-			$('#formLogin').css('transform', 'rotateY(0deg)');
-			$('#formAddUser').css('transform', 'rotateY(180deg)');
-		} else {
-			alrert("비밀번호가 일치하지 않습니다!");
-			return false;
+	// 이메일 중복 확인
+	$(document).on("blur", "#inputUserEmail", function(){
+	
+		$.ajax({
+                 url : '/Email_Confirm',
+                 dataType : 'json',
+                 type : 'POST',
+                 data : {                          
+                    'User_Email' : this.value          
+           },
+           success : function(result) {
+            if(result.suc == true){
+      
+            } else  {
+                 $('#email_msg').css('display', 'block');
+            }          
+           }
+       });
+	});
+	$(document).on("focus", "#inputUserEmail", function(){
+		$('#email_msg').css('display', 'none');
+	});
+	
+	// 비밀번호 일치 확인
+	$(document).on("blur", "#rePassword", function(){
+		if($('#inputPassword').val() != $('#rePassword').val()){
+			$('#pw_msg').css('display', 'block');
 		}
 	});
+	$(document).on("focus", "#inputPassword", function(){
+		$('#pw_msg').css('display', 'none');
+	});
+	$(document).on("focus", "#rePassword", function(){
+		$('#pw_msg').css('display', 'none');
+	});
+
+
 });
 

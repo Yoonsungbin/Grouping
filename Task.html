@@ -23,12 +23,10 @@
       <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
       <script src="../javascripts/Task.js"></script>
 <script>
-
 </script>
 
 
    <body>
-
       <button class="new">
          new</a>
       </button>
@@ -110,8 +108,6 @@
             </div><!--/.modal-content-->
          </div><!--/.modal-dialog-->
       </div><!--/.modal-->
-
-      
 	<div class="modal fade" id="labelModal" tabindex="-1" role="dialog" aria-labelledby="labelModalLabel" aria-hidden="true">
          <div class="modal-dialog">
             <div class="modal-content">
@@ -141,7 +137,6 @@
             </div><!--/.modal-content-->
          </div><!--/.modal-dialog-->
       </div><!--/.modal-->
-     
       <div class="modal fade" id="editlabelModal" tabindex="-1" role="dialog" aria-labelledby="editlabelModalLabel" aria-hidden="true">
          <div class="modal-dialog">
             <div class="modal-content">
@@ -181,12 +176,7 @@
                   </button>
                   <h4 class="modal-title">해야 할 일 수정 하기</h4>
 		 <div class="tog_edit">
-                     <button type="hidden" id="content_btn">
-                        <a href="#" onclick="showID('content_btn_another');">진행중!</a>
-                     </button>
-                     <button id="content_btn_another">
-                        <a href="#" onclick="showID('content_btn');">완료!</a>
-                     </button>
+                     <button id="toggle" name=""></button>
                   </div>
                </div>
                <div class="modal-body">
@@ -216,12 +206,19 @@
                </div>
                <div>
                   <div class="modal-footer">
+		   <div id= "met"></div>
+		<div>
+		    <input type="text" id="CoText" name="text" autocomplete="off" >
+		    <input type="button" id="Comment" onclick="Comment()" value="Comment" >
+		</div>
+		<div>
                      <button type="button" class="btn btn-default" data-dismiss="modal">
                         닫기
                      </button>
                      <button type="button" id="TaskModifyBtn" class="btn btn-primary" data-dismiss="modal">
                         수정
                      </button>
+		</div>
                   </div>
                </div>
             </div><!--/.modal-content-->

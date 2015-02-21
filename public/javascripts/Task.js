@@ -1,3 +1,127 @@
+	function show() {	
+	   var obj = document.getElementById('content_btn');
+           var obj_a = document.getElementById('content_btn_another');
+            var result= true;
+
+            if (result == true) {
+               obj_a.style.display = "none";
+               obj.style.display = "inline";
+            } else {
+               obj.style.display = "none";
+               obj_a.style.display = "inline";
+            }
+	}
+
+
+var Work_Id;
+
+$(document).on('click', '.CommentDelete', function() {
+	 $.ajax({
+            url : '/CommentDelete',
+            dataType : 'json',
+            type : 'POST',
+            data : {
+                'Work_Id' : Work_Id,
+		'Comment_Id' : 	$(this).parent().parent().attr('id')
+            },
+            success : function(data) {
+	     var dataform = JSON.stringify(data);
+        var temp = JSON.parse(dataform);
+        var list = new Array();
+         for (var i = 0; i < temp.length; i++) {
+         list.push({
+                id : temp[i]._id,
+                User : temp[i].Comment_User,
+                Text : temp[i].Comment
+                 });
+        }
+      var text = "";
+      $.each(list, function(index, item) {
+                text += "<div class ='CommentList' id ='"+item.id+"'>";
+                text += "<p>"+item.User+" : "+item.Text;
+		text += "<span class ='CommentDelete'>삭제</span>";
+		text += "<span class ='CommentModify'>수정</span></p>";
+                text += "</div>";
+      });
+             var box = document.getElementById('met');
+             box.innerHTML = text;
+		}
+	});
+});
+
+$(document).on('click', '.CommentModify', function() {
+         $.ajax({
+            url : '/CommentModify',
+            dataType : 'json',
+            type : 'POST',
+            data : {
+                'Work_Id' : Work_Id,
+                'Comment_Id' :  $(this).parent().parent().attr('id'),
+		'text' :$('#CoText').val()
+            },
+            success : function(data) {
+             var dataform = JSON.stringify(data);
+        var temp = JSON.parse(dataform);
+        var list = new Array();
+         for (var i = 0; i < temp.length; i++) {
+         list.push({
+                id : temp[i]._id,
+                User : temp[i].Comment_User,
+                Text : temp[i].Comment
+                 });
+        }
+      var text = "";
+      $.each(list, function(index, item) {
+                text += "<div class ='CommentList' id ='"+item.id+"'>";
+                text += "<p>"+item.User+" : "+item.Text;
+                text += "<span class ='CommentDelete'>삭제</span>";
+                text += "<span class ='CommentModify'>수정</span></p>";
+                text += "</div>";
+      });
+             var box = document.getElementById('met');
+             box.innerHTML = text;
+	$('#CoText').val('');
+
+                }
+        });
+});
+function Comment() {
+	  $.ajax({
+            url : '/CommentAdd',
+            dataType : 'json',
+            type : 'POST',
+            data : {
+                'text' : $('#CoText').val(),
+		'Work_Id' : Work_Id,
+            },
+            success : function(data) {
+	var dataform = JSON.stringify(data);
+	var temp = JSON.parse(dataform);
+	var list = new Array();
+	 for (var i = 0; i < temp.length; i++) {
+         list.push({
+		id : temp[i]._id,
+		User : temp[i].Comment_User,
+		Text : temp[i].Comment
+        	 });
+      	}
+      var text = "";
+      $.each(list, function(index, item) {
+		text += "<div class ='CommentList' id ='"+item.id+"'>";
+                text += "<p>"+item.User+" : "+item.Text;
+                text += "<span class ='CommentDelete'>삭제</span>";
+                text += "<span class ='CommentModify'>수정</span></p>";
+                text += "</div>";
+      });
+ 	     var box = document.getElementById('met');
+     	     box.innerHTML = text;
+
+	$('#CoText').val('');
+            }
+         });
+
+}
+
 
 $.getJSON('/TaskAppend', function(data) {
        var dataform = JSON.stringify(data);
@@ -195,6 +319,7 @@ var DELAY = 500,
      var  x = event.pageX - event.offsetX;
      var  y = event.pageY - event.offsetY; 
      var Id = this.id;	
+     Work_Id = this.id;
             timer = setTimeout(function() {
 	$.ajax({
 	        url: '/Get_TaskData',
@@ -230,9 +355,33 @@ var DELAY = 500,
          'Work_Id' : Id,
      },
      success : function(data) {
+
+
 //	$('#Modify_Name').val($('#Task_Name').value);
    var dataform = JSON.stringify(data);
    var temp = JSON.parse(dataform);
+
+var a = temp.Work_Finish;
+            prepare(a);
+            function prepare(data){         
+               var toggle_btn = document.getElementById('toggle');   
+               if(data == "false"){
+                  toggle_btn.name = "false";
+                  toggle_btn.innerHTML = "진행중";
+               } else if(data == "true"){
+                  toggle_btn.name = "true";
+                  toggle_btn.innerHTML = "완료";   
+               }
+            }
+            $(document).on("click", "#toggle", function(){
+               if(this.name == "false"){
+                  prepare("true");
+               } else if(this.name == "true"){
+                  prepare("false");
+               }
+            });
+
+
 	$('#Modify_Name').val(temp.Work_Name);
 	$('#Modify_Sday').val(temp.Work_Sday);
 	$('#Modify_Dday').val(temp.Work_Dday);
@@ -275,6 +424,37 @@ var M_List = new Array();
             });
             var box = document.getElementById('bb');
             box.innerHTML = yes;
+  $.ajax({
+            url : '/GetComment',
+            dataType : 'json',
+            type : 'POST',
+            data : {
+                'Work_Id' : Work_Id,
+            },
+            success : function(data) {
+	var dataform = JSON.stringify(data);
+        var temp = JSON.parse(dataform);
+        var alist = new Array();
+         for (var i = 0; i < temp.length; i++) {
+         alist.push({	
+		id : temp[i]._id,
+                User : temp[i].Comment_User,
+                Text : temp[i].Comment
+                 });
+        }
+      var text = "";
+      $.each(alist, function(index, item) {
+                text += "<div class='CommentList' id ='"+item.id+"'>";
+                text += "<p>"+item.User+" : "+item.Text;
+		text += "<span class='CommentDelete'>삭제</span>";
+		text += "<span class ='CommentModify'>수정</span></p>";
+                text += "</div>";
+      });
+             var abox = document.getElementById('met');
+             abox.innerHTML = text;
+
+            }
+         });
 
 
 	}
@@ -287,6 +467,7 @@ var M_List = new Array();
      var Sday = document.getElementById("Modify_Sday").value;
      var Memo = document.getElementById("Modify_Memo").value;
     var Dday = document.getElementById("Modify_Dday").value;
+    var toggle_btn = document.getElementById('toggle').name;   
 
     var Work_Person  = new Array();
     $(".chk:checked").each(function(){
@@ -307,6 +488,7 @@ var M_List = new Array();
          'Dday' : Dday,
          'Work_Person' : dataform,
          'Memo' : Memo,
+	'Finish':toggle_btn,
      },
      success : function(data) {
         $('#editModal').modal('hide');

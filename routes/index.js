@@ -6,7 +6,180 @@ var ObjectID = require('mongodb').ObjectID;
 var multer  = require('multer');
 var gcm = require('node-gcm');
 var path = require('path');
+var nodemailer = require('nodemailer');
+var transporter = nodemailer.createTransport();
 /* GET home page. */
+//개인정보수정페이지 이름가져오기
+router.get('/getUserName',function(req,res){
+	console.log('이름알아가자');
+	res.send({name:req.session.User_Name});
+});
+//개인정보수정 데이터교환
+router.post('/MyEdit',function(req,res) {
+	console.log('aaaaaaa');
+	var User_Name = req.body.User_Name;
+	var User_Pass = req.body.User_Pass;
+	var New_Pass = req.body.New_Pass;
+	console.log(New_Pass);
+	console.log(User_Pass);
+	var db = req.db;
+	var User = db.get('User');
+
+	if( User_Pass != req.session.User_Pass){
+	 	res.send({suc:false});
+	}
+/*
+else if (New_Pass == "") {
+		User.update({"User_Email":req.session.User_Email},{$set:{"User_Name":User_Name}},function(err,dataform){
+			if(dataform== null) {
+				console.log('이름바뀌실패');
+			} else {
+				console.log(dataform);
+				res.send({suc:"name"});
+			}
+		});
+	} */
+else {
+		User.update({"User_Email":req.session.User_Email},{$set:{"User_Name":User_Name,"User_Pass":New_Pass}},function(err,data){
+		if(data == null) {
+			console.log('수정실패');
+		} else {
+			console.log(data);
+			res.send({suc:true});
+		}
+	   });
+	}
+});
+
+
+
+//비밀번호찾기
+router.post('/Find_PW', function(req,res){
+  var User_Email = req.body.User_Email;
+  var User_Name = req.body.User_Name;
+  var db = req.db;
+  var User = db.get('User');
+  User.findOne({"User_Email":User_Email, "User_Name":User_Name}, function(err, data){
+    if(data == null)
+    {
+      console.log(err);
+      res.send({suc:false});
+    }
+    else{
+      console.log('비밀번호 찾기 성공');
+     
+      transporter.sendMail({
+        from:"grouping6@gmail.com",
+        to: User_Email,
+        subject:"Grouping: 비밀번호 찾기 요청입니다.",
+        text : "User_Email : "+ data.User_Email +"\nUser_Password : "+ data.User_Pass
+      });
+      res.send({suc:true});
+    }
+  });
+});
+
+router.post('/Email_Confirm', function(req,res){
+
+var User_Email = req.body.User_Email;
+var db = req.db;
+var User = db.get('User');
+
+User.findOne({"User_Email":User_Email}, function(err,data){
+if(data == null){
+	console.log('일치 없다');
+  res.send({suc:true});
+}
+else{
+	console.log(data);
+  res.send({suc:false});
+}
+});
+});
+
+
+router.get('/FindPassword', function (req, res) {
+  fs.readFile('FindPassword.html','utf-8', function (err, data){
+    res.writeHead(200, { 'Content-Type':'text/html' });
+    res.end(data,'utf8');
+  });
+});
+router.post("/GetComment", function (req, res) {	
+	var Work_Id = req.body.Work_Id;
+        var db = req.db;
+        var Work_Comment = db.get('Work_Comment');
+        Work_Comment.find({"Project_Id":ObjectID(req.session.Project_Id),"Project_Work_Id":ObjectID(Work_Id)},function(err,data){
+        console.log(data);
+        res.send(data);
+        });
+});
+
+router.post("/CommentDelete", function (req, res) {
+  var Work_Id = req.body.Work_Id;
+  var Comment_Id = req.body.Comment_Id;
+  var db = req.db;
+  var Work_Comment = db.get('Work_Comment');
+
+  Work_Comment.remove({"_id":ObjectID(Comment_Id)}, function(err,doc){
+    if(!err){
+      console.log(doc);
+	 Work_Comment.find({"Project_Id":ObjectID(req.session.Project_Id),"Project_Work_Id":ObjectID(Work_Id)},function(err,data){
+        console.log(data);
+        res.send(data);
+        });
+    }
+  });
+});
+
+router.post("/CommentModify", function (req, res) {
+  var Work_Id = req.body.Work_Id;
+  var Comment_Id = req.body.Comment_Id;
+  var text = req.body.text;
+  var db = req.db;
+  var Work_Comment = db.get('Work_Comment');
+
+  Work_Comment.update({"_id":ObjectID(Comment_Id)},{$set:{"Comment":text}}, function(err,doc){
+    if(!err){
+      console.log(doc);
+         Work_Comment.find({"Project_Id":ObjectID(req.session.Project_Id),"Project_Work_Id":ObjectID(Work_Id)},function(err,data){
+        console.log(data);
+        res.send(data);
+        });
+    }
+  });
+});
+router.post("/CommentAdd", function (req, res) {
+        var Work_Id = req.body.Work_Id;
+        var text = req.body.text;
+        console.log("Comment field");
+        console.log(req.body.text);
+        var db = req.db;
+        var Work_Comment = db.get('Work_Comment');
+        Work_Comment.insert({"Project_Id":ObjectID(req.session.Project_Id),"Project_Work_Id":ObjectID(Work_Id),"Comment_User":req.session.User_Name,"Comment":text},function(err,dataform){
+                console.log('update form');
+                console.log(dataform);
+        });
+Work_Comment.find({"Project_Id":ObjectID(req.session.Project_Id),"Project_Work_Id":ObjectID(Work_Id)},function(err,data){
+        console.log(data);
+        res.send(data);
+        });
+});
+
+router.post("/Comment", function (req, res) {
+	var Work_Id = req.body.Work_Id;
+	var text = req.body.text;
+	var db = req.db;
+	var Work_Comment = db.get('Work_Comment');
+	
+	Work_Comment.find({"Project_Id":ObjectID(req.session.Project_Id),"Project_Work_Id":ObjectID(Work_Id)},function(err,data){
+	console.log(data);
+	res.send(data);
+	});
+});
+
+
+
+
 router.get('/GetMyList',function(req,res){
 	console.log('get my list 들어왓어요');
 	console.log(req.session.User_Id);
@@ -96,7 +269,13 @@ router.get('/', function (req, res) {
     res.end(data,'utf8');
   });
 });
-
+/* First Page */
+router.get('/MyDataModify', function (req, res) {
+  fs.readFile('MyDataModify.html', function (error, data){
+    res.writeHead(200, { 'Content-Type':'text/html' });
+    res.end(data,'utf8');
+  });
+});
 /* Sign In */
 router.post('/SignIn',function(req, res) {
 
@@ -183,7 +362,9 @@ router.post('/TaskNewAdd',function (req,res) {
   var Task_Memo = req.body.Memo;
   var Project_Work = db.get('Project_Work');
 var Project_Member=db.get('Project_Member');
-  Project_Work.insert({"Project_Id":ObjectID(req.session.Project_Id),"Project_Name":req.session.Project_Name,"Work_Name":Task_Name,"Work_Sday":Task_Sday,"Work_Dday":Task_Dday,"Work_Memo":Task_Memo,"Work_Finish":'on',"Work_Top":'480px',"Work_Left":'30px',"Work_Person" :Person} ,function(err,data){
+var Work_Comment=db.get('Work_Comment');
+ //Work_Comment.insert({"Project_Id":ObjectID(req.session.Project_Id),"Work_Comment":{"Comment_User":null,"Comment":null}}); 
+  Project_Work.insert({"Project_Id":ObjectID(req.session.Project_Id),"Project_Name":req.session.Project_Name,"Work_Name":Task_Name,"Work_Sday":Task_Sday,"Work_Dday":Task_Dday,"Work_Memo":Task_Memo,"Work_Finish":'false',"Work_Top":'480px',"Work_Left":'30px',"Work_Person" :Person} ,function(err,data){
     if(data  == null){
       console.log('업무삽입실패')
     } else {
@@ -254,19 +435,13 @@ router.post('/Update_TaskData',function(req,res){
   var Sday = req.body.Sday;
   var Dday = req.body.Dday;
   var Memo = req.body.Memo;
-//  var Finish = req.body.Finish;
+  var Finish = req.body.Finish;
   var Task_Person = req.body.Work_Person;
   var Person =JSON.parse(Task_Person);
   var db = req.db;
-console.log(Work_Id);
-console.log(Name);
-console.log(Sday);
-console.log(Dday);
-console.log(Memo);
-console.log(Person);
   var Project_Work = db.get('Project_Work');
   var Work_Comment = db.get('Work_Comment');
-Project_Work.update({"_id":ObjectID(Work_Id)},{$set:{"Work_Name":Name,"Work_Sday":Sday,"Work_Dday":Dday,"Work_Person":Person,"Work_Memo":Memo}});
+Project_Work.update({"_id":ObjectID(Work_Id)},{$set:{"Work_Name":Name,"Work_Sday":Sday,"Work_Dday":Dday,"Work_Person":Person,"Work_Memo":Memo,"Work_Finish":Finish}});
   Project_Work.findOne({"_id":ObjectID(Work_Id)},function(err,data){
     if(data == null){
       console.log('no id');

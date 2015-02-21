@@ -17,7 +17,16 @@
 		<link rel="stylesheet" type="text/css" href="../stylesheets/index.css">
 
 	</head>
+	<script>
+		  function FindPassword(){
+                        var popUrl = "/FindPassword";
+                        //팝업창에 출력될 페이지 URL
+                        var popOption = "width=400, height=250, resizable=no, left=middle, top=middle";
+                        //팝업창 옵션(optoin)
+                        window.open(popUrl, "", popOption);
+                }
 
+	</script>
 	<body>
 		<div id="head-bar">
 			<h1 id="logo">Grouping</h1>
@@ -61,14 +70,16 @@
 					<form id="formLogin" class="form" method="post" action="/SignIn" >
 						<input type="text" id="User_Email"  name="loginname" placeholder="이메일"><br>
 						<input type="password" id="User_Pass" name="loginpassword" placeholder="비밀번호"><br>
-						<input type="submit" id="login_btn" onclick="abc()" value="로그인"><br>
-						<a id="pwfind" href="#">비밀번호 찾기</a><br>
+						<input type="submit" id="login_btn" onclick="abc();" value="로그인"><br>
+						<a id="pwfind" href="javascript:void();" onclick="FindPassword(); return false">비밀번호 찾기</a><br>
 					</form>
 					<form id="formAddUser" class="form" name="register" method="post" action="/SignUp">
 						<input type="text" id="inputUserEmail" name="useremail" placeholder="이메일"><br>
+						<div id="email_msg" class="alertmsg">이미 사용중인 이메일 입니다!</div>
 						<input type="text" id="inputUserName" name="username" placeholder="이름"><br>
 						<input type="password" id="inputPassword" name="userpassword" placeholder="비밀번호">	<br>
 						<input type="password" id="rePassword" name="eq" placeholder="비밀번호확인"><br>
+						<div id="pw_msg" class="alertmsg">비밀번호가 일치하지 않습니다!</div>
 						<input type="submit" id="btnSubmit" value="회원가입">	<br>
 					</form>
 				</div>
