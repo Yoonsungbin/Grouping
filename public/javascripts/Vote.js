@@ -11,18 +11,15 @@ $.getJSON('/GetVote',function(data){
 			var opt = new Array();
 			var num1 = new Array();
 			var mem = new Array();
-			alert(data[i].Vote_Opt.length);
 		for(var j = 0; j < data[i].Vote_Opt.length;j++){
 			var aaa = new Object();
 			opt[j] = data[i].Vote_Opt[j];
-			alert(opt[j]);
 		//	alert(opt[j]);
 		//	num[j] = data[i].Vote_Num[j];
 		//	aa.opt = data[i].Vote_Opt[j];
 			aaa.opt = data[i].Vote_Num[j].opt;
 			aaa.num = data[i].Vote_Num[j].num;
 			num1.push(aaa);
-			alert(num1);
 		}
 	for(var k = 0; k < data[i].Vote_Member.length;k++){
 			mem[k] = data[i].Vote_Member[k];
@@ -112,6 +109,8 @@ $(document).on('click', '#vote_add_btn', function(){
 	}
 	var oo = JSON.stringify(opt);
 	var nn = JSON.stringify(num);
+alert(oo);
+alert(nn);
 	$.ajax({
 		url : '/VoteAdd',
 		dataType : 'json',
@@ -134,7 +133,6 @@ $(document).on('click', '#vote_add_btn', function(){
 
 // #Vote_Do_Modal   Show!
 $(document).on('click', '.vote_do', function(){
-	alert('클릭');
 	uid = this.id;
 	index = this.name;
 	var mtitle = $('#Vote_Do_Modal .modal-title');

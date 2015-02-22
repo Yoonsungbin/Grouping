@@ -1,0 +1,72 @@
+body {
+	background: #f2f2f2;
+	font-family: '함초롬돋움';
+	font-size: 16px;
+	text-align: center;
+	margin: 0;
+}
+#wrapper{
+	padding-top: 10px;
+}
+#write_btn{
+	float: right;
+	border: 0;
+	background: #ee786c;
+	color: #F2F2F2;
+	padding: 5px 8px;
+	margin-right: 5%;
+	margin-bottom: 5px;
+}
+#board{
+	clear: both;
+	margin: auto;
+	width: 90%;
+	background: white;	
+}
+tr:hover{
+	background: #FCE4E2;
+	cursor: pointer;
+}
+tr:first-child{
+	background: #7bb080;
+	cursor: auto;
+}
+tr:first-child td{
+	border-top: 2px solid #737373;	
+	border-bottom: 1px solid #737373;	
+}
+td{
+	padding: 5px 3px;
+	border-bottom: 1px solid #737373;	
+}
+.no{
+	width: 36px;
+}
+.title{
+	text-align: left;
+}
+.ctb{
+	background: #fccd4c;
+	padding: 1px 3px;
+}
+#pagination_wrapper{
+	margin-top: 10px;
+	
+}
+#search_form{
+	width: 50%;
+	margin: auto;
+	margin-top: 10px;
+}
+#input_search{
+	width:70%;
+	padding: 5px;
+	border: 1px solid #737373;
+}
+#search_btn{
+	padding: 5px 8px;
+	border: 0;
+	background: #689470;
+	border: 1px solid #689470;
+}
+

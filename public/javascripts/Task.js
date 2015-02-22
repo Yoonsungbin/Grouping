@@ -192,6 +192,7 @@ $.getJSON('/LabelAppend',function(data){
       var ltext = "";
                $.each(Label_List, function(index, item) {
                   ltext += "<div class ='label' id ='" +item.Id +"' style ='top :"+item.Top+"; left:"+item.Left+";'>";
+		  ltext += "<div class ='label-content'>";
                   ltext += item.Name;
                   ltext += "</div></div><p>&nbsp;</p>";
                });

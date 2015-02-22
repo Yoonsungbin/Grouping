@@ -95,7 +95,7 @@ var scr = document.getElementById('messages');
   socket.on('putmessage',function(data) {
    if (data.User_Name == User_Name) {
     var text = '';
-  text += "<img src='/DownloadProfile/"+Uid+"' width=50px height=50px>";
+ // text += "<img src='/DownloadProfile/"+Uid+"' width=50px height=50px>";
   text += "<div class = 'my'>";
   text += "<div class = 'msg'>"+ data.message+ "</div>";
   text += "<div class ='time'>" + data.Time+ "</div>";
@@ -104,7 +104,8 @@ var scr = document.getElementById('messages');
 
   } else {
     var text = '';
-  text += "<img src='/DownloadProfile/"+data.Now_Id+"' width=50px height=50px>";
+ // text += "<img src='/DownloadProfile/"+Uid+"' style=' clear: both; float: left; margin-left: 5px; margin-top: 3px; border-radius: 25px;' width=50px height=50px>";
+  text += "<div class='profile'><img src='/DownloadProfile/"+data.Now_Id+"'></div>";
   text += "<div class='your'>";
   text += "<div class = 'member'>"+ data.User_Name + "</div>";
   text += "<div class = 'msg'>" + data.message + "</div>";

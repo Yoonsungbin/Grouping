@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>Community</title>
+		
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+		
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script src="../javascripts/Community.js"></script>
+		<link rel="stylesheet" type="text/css" href="../stylesheets/Additional_Frame.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/Community.css">
+		
+	</head>
+
+	<body>
+		<div class="sidebar">
+			<a href="Project" target="cwindow">그루핑</a>
+			<div id="menu_fix">
+				<ul id="submenu" class="menu">
+					<li><a name="info" href="Mypage" target="cwindow"> <span>내 정보</span> </a></li>
+					<li><a name="community" href="#"> <span>커뮤니티</span> </a></li>
+					<li><a name="logout" href="/"> <span>로그아웃</span> </a></li>
+				</ul>
+			</div>
+		</div>
+		<div id="wrapper">
+			<h2>그루핑에서 함께할 팀원을 찾아보세요</h2>
+			<button id="write_btn">글쓰기</button>
+			<table id="board" border="0" cellpadding="0" cellspacing="0"></table>
+			<div id="pagination_wrapper">페이지네이션 일단 지금은 아무 생각이 안나니까 안할래</div>
+			<form id="search_form">
+				<input type="search" id="input_search">
+				<input type="submit" id="search_btn" value="검색">
+			</form>
+		</div>
+	</body>
+</html>
+

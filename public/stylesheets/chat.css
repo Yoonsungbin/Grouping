@@ -129,43 +129,67 @@ body {
 	background: #f2f2f2;
 	font-size: 14px;
 }
+
+.my{
+   float: right;
+}
+.your{
+   float: left;
+}
 .my, .your {
-	margin-left: 5px;
-	margin-right: 5px;
+   width: 215px;
+   display: inline-block;
+   margin: 0 auto;
+   margin-left: 5px;
+   margin-right: 5px;
+}
+.profile{
+   clear: both;
+   float: left;
+   display: inline-block;
+   margin-left: 5px;
+   margin-top: 3px;
+}
+.profile img{
+   width: 50px;
+   height: 50px;
+   border-radius: 25px;
 }
 .member{
-	clear: both;
-	float: left;
-	width: 60px;
-	margin-left: 5px;
-	margin-top: 3px;
+   clear: both;
+   float: left;
+   margin-top: 3px;
+   margin-left: 3px;
+   display: inline-block;
 }
 .msg{
-	clear: both;
-	max-width: 70%;
-	border: 1px solid gray;
-	padding: 4px;	
-	margin: 3px 0px 4px 0px;
+   clear: both;
+   max-width: 80%;
+   min-width: 40px;
+   border: 1px solid #d9d9d9;
+   padding: 4px;   
+   margin: 3px 0px 4px 0px;
+   background: white;
 }
 .my .msg{
-	float: right;
-	border-radius: 5px 5px 0 5px;
+   float: right;
+   border-radius: 5px 0px 5px 5px;
 }
 .your .msg{
-	float: left;
-	border-radius: 5px 5px 5px 0;
+   float: left;
+   border-radius: 0px 5px 5px 5px;
 }
 .time{
-	font-size: 10px;
-	margin-top: 8px;
+   font-size: 10px;
+   margin-top: 8px;
 }
 .my .time{
-	float: right;
-	margin-right: 3px;
+   float: right;
+   margin-right: 3px;
 }
 .your .time{
-	float: left;
-	margin-left: 3px;
+   float: left;
+   margin-left: 3px;
 }
 
 #send{

@@ -9,6 +9,53 @@ var path = require('path');
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport();
 /* GET home page. */
+router.get('/CommunityView',function(req,res){
+	
+	var db = req.db;
+	var Community = db.get('Community');
+	Community.findOne({"_id":ObjectID(req.session.Com)},function(err,data){
+		if(data == null) {
+
+		} else {
+			res.send({suc:data});
+		}
+	});
+
+});
+router.post('/ClickList',function(req,res){
+	 var id = req.body.id;
+	console.log(id);
+	req.session.Com = id;
+	res.send({suc:'suc'});
+});
+
+router.get('/CommunityList',function(req,res){
+	var db = req.db;
+	var Community = db.get('Community');
+
+	Community.find({},function(err,data){
+		if(data == null ) {
+
+		} else{
+			console.log(data);
+			res.send({suc:data});
+		}
+	});
+});
+
+router.post('/CommunityNewWrite',function(req,res){
+	var title = req.body.title;
+	var text = req.body.text;
+	 var month = 0 + String(parseInt(Date.today().getMonth())+1);
+	var today = Date.today().getFullYear()+'-'+month+'-'+Date.today().getDate()+1;
+	console.log(today);
+	var User_Id =req.session.User_Id;
+	var db = req.db;
+	var Community = db.get('Community');
+
+	Community.insert({"Title":title,"User_Name":req.session.User_Name,"User_Point":'1',"Day":today,"Text":text});	
+	res.redirect("Community");
+});
 
 router.post('/VoteDone',function(req,res){
 	var id = req.body.id;
@@ -188,7 +235,25 @@ else{
 });
 });
 
+router.get('/Community', function (req, res) {
+  fs.readFile('Community.html','utf-8', function (err, data){
+    res.writeHead(200, { 'Content-Type':'text/html' });
+    res.end(data,'utf8');
+  });
+});
 
+router.get('/Community_Write', function (req, res) {
+  fs.readFile('Community_Write.html','utf-8', function (err, data){
+    res.writeHead(200, { 'Content-Type':'text/html' });
+    res.end(data,'utf8');
+  });
+});
+router.get('/Community_View', function (req, res) {
+  fs.readFile('Community_View.html','utf-8', function (err, data){
+    res.writeHead(200, { 'Content-Type':'text/html' });
+    res.end(data,'utf8');
+  });
+});
 router.get('/FindPassword', function (req, res) {
   fs.readFile('FindPassword.html','utf-8', function (err, data){
     res.writeHead(200, { 'Content-Type':'text/html' });
