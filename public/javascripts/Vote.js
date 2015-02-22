@@ -4,28 +4,35 @@ var list = new Array();
             $.getJSON('/getUserName',function(data){
 		user = data.name;
 $.getJSON('/GetVote',function(data){
-
 	for (var i = 0; i < data.length; i++) {	
 			var id = data[i]._id;
 			var name = data[i].Vote_Name;
 			var dday = data[i].Vote_Dday;	
 			var opt = new Array();
-			var num = new Array();
+			var num1 = new Array();
 			var mem = new Array();
+			alert(data[i].Vote_Opt.length);
 		for(var j = 0; j < data[i].Vote_Opt.length;j++){
+			var aaa = new Object();
 			opt[j] = data[i].Vote_Opt[j];
-			num[j] = data[i].Vote_Num[j];
+			alert(opt[j]);
+		//	alert(opt[j]);
+		//	num[j] = data[i].Vote_Num[j];
+		//	aa.opt = data[i].Vote_Opt[j];
+			aaa.opt = data[i].Vote_Num[j].opt;
+			aaa.num = data[i].Vote_Num[j].num;
+			num1.push(aaa);
+			alert(num1);
 		}
-
 	for(var k = 0; k < data[i].Vote_Member.length;k++){
 			mem[k] = data[i].Vote_Member[k];
 	}
-
 			list.push({
+				    id : id,
 			            Title : name,
 			            Dday : dday,
 			            Opt : opt,
-			   	    Num : num,
+			   	    Num : num1,
 	      			    Member:mem
 				});
 		
@@ -56,17 +63,19 @@ function prepare(){
 				var max = [0];
 				var temp = 0;
 				// cnt중 가장 큰 수를 찾아 그 인덱스를 max에 입력하는 for문, 
+		//	alert(item.Num.length);
 				for(i = 0; i<item.Num.length; i++){
-					if(temp < item.Num[i]){	// 최고값이 나올 경우
-						temp = item.Num[i];
+		//	alert(item.Num[i].num);
+					if(temp < item.Num[i].num){	// 최고값이 나올 경우
+						temp = item.Num[i].num;
 						max = [i];					// max배열을 현재 인덱스 하나로 이루어진 배열로 초기화합니다.
-					} else if(temp == item.Num[i]){	// 최다 득표가 다수일 경우
+					} else if(temp == item.Num[i].num){	// 최다 득표가 다수일 경우
 						max.push(i);		// max배열에 인덱스를 push합니다.
 					}
 				}
 				text += "<div class='vote'>";
 				text += "<div class='title already'><a id='" + item.id + "' name='"+voteId+"' class='vote_done' data-toggle='modal' href='#Vote_Done_Modal' data-role='add'>" + item.Title + "</a></div>";
-				text += "<div class='detail already'><span>최다득표 [" + item.Num[max[0]] + "표] ";
+				text += "<div class='detail already'><span>최다득표 [" + item.Num[max[0]].num + "표] ";
 				// 최다득표 선택지가 여러개일수 있기 때문에 반복문으로 선택지를 보여줍니다.
 				for(i = 0; i<max.length; i++){
 					text += item.Opt[max[i]];
@@ -125,8 +134,8 @@ $(document).on('click', '#vote_add_btn', function(){
 
 // #Vote_Do_Modal   Show!
 $(document).on('click', '.vote_do', function(){
-	alert('a')
-alert(this.name);
+	alert('클릭');
+	uid = this.id;
 	index = this.name;
 	var mtitle = $('#Vote_Do_Modal .modal-title');
 	var mbody = $('#Vote_Do_Modal .modal-body');
@@ -134,7 +143,8 @@ alert(this.name);
 	mtitle.append("[마감일 : " + list[index].Dday + "]");
 	var text = "";
 	for(var i = 0; i<list[index].Opt.length; i++){
-		text += "<input type='radio' name='voted' value='" + i + "'> ";
+		//text += "<input type='radio' name='voted' value='" + i + "'> ";
+		text += "<input type='radio' name='voted' id='"+list[index].Opt[i]+"'> ";
 		text += list[index].Opt[i] + "<br>";
 	}
 	mbody.text("");
@@ -143,28 +153,31 @@ alert(this.name);
 
 // 투표하기 완료 버튼 클릭 시
 $(document).on('click', '#vote_do_btn', function(){
+//	alert('bb');
 	var radio = document.getElementsByName('voted');
 	var number;
 	// index번째 list의 옵션중 라디오버튼으로 선택된 옵션의 cnt를 1 증가시키는 for문입니다
 	for(var i = 0; i<radio.length; i++){
-		if(radio[i].checked) number =i;
-//list[index].Num[radio[i].value]++;
+		if(radio[i].checked) {
+		number =i;
+		optname = radio[i].id;
+	//	alert(radio[i].id);
+		}
 	}
-/*
 	$.ajax({
 	url: '/VoteDone',
 	dataType: 'json',
 	type : 'POST',
 	data: {
-		 'id' :index,
-		 'index' : number
+		 'id' :uid,
+		 'index' : optname
 	},
 	success: function(result) {
 
 	$('#Vote_Do_Modal').modal('hide');		// 모달창을 닫습니다. 사실 닫는게 아니라 가리는것.
+	window.location="Vote";
 	}
 });
-*/
 
 
 //	list[index].Member.push(user);		// voter(기투표자)에 현재 유저를 추가합니다.
@@ -180,7 +193,7 @@ $(document).on('click', '.vote_done', function(){
 	mtitle.append("[마감일 : " + list[index].Dday + "]");
 	var text = "<ol>";
 	for(var i = 0; i<list[index].Opt.length; i++){
-		text += "<li>" + list[index].Opt[i] + " [" + list[index].Num[i] + "표]</li>";
+		text += "<li>" + list[index].Opt[i] + " [" + list[index].Num[i].num + "표]</li>";
 	}
 	text += "</ol>";
 	mbody.text("");

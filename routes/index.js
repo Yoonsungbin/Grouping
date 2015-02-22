@@ -9,6 +9,27 @@ var path = require('path');
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport();
 /* GET home page. */
+
+router.post('/VoteDone',function(req,res){
+	var id = req.body.id;
+	var index = req.body.index;
+	var db =req.db;
+	var Vote = db.get('Vote');
+	console.log('들어오나요');
+	console.log(id);
+	console.log(index);
+	console.log(req.session.User_Name);
+	Vote.update({"_id":ObjectID(id),"Vote_Num.opt":index},{ $inc : {"Vote_Num.$.num":1}});
+	Vote.update({"_id":ObjectID(id)},{$pull :{"Vote_Member":req.session.User_Name}},{multi:true});
+Vote.findOne({"Vote_Num.opt":index},function(err, dataa){
+                console.log(dataa);	
+		res.send({ss:'ss'});
+        });
+
+});
+
+
+
 //모든리스트
 router.get('/GetVote',function(req,res) {
 console.log('a');
@@ -34,14 +55,22 @@ router.post('/VoteAdd',function(req,res){
 	var Vote_Opt = req.body.Vote_Opt;
 	var Vote_Num = req.body.Vote_Num;
 	var Vote_Dday = req.body.Vote_Dday;
+//	var Vote_Num = new Array();
 
 	console.log(Vote_Name);
 	console.log(Vote_Dday);
 	var opt =JSON.parse(Vote_Opt);
 	var num = JSON.parse(Vote_Num);
-	console.log(opt);
-	console.log(opt[0]);
-	console.log(opt.length);
+//	console.log(opt);
+//	console.log(opt[0]);
+//	console.log(opt.length);
+	var abc = new Array();
+	for (var i =0; i < opt.length; i ++) {
+		var aa = new Object();
+		aa.opt = opt[i];
+		aa.num = num[i];
+		abc.push(aa);		
+	}
 	var db = req.db;
 	var Vote = db.get('Vote');
     var Project_Member = db.get('Project_Member');
@@ -50,7 +79,7 @@ Project_Member.col.aggregate({$match:{"Project_Id":ObjectID(req.session.Project_
         res.send(member);
                         } else {
                 console.log(member);
-	Vote.insert({"Project_Id":ObjectID(req.session.Project_Id),"Vote_Name":Vote_Name,"Vote_Opt":opt,"Vote_Num":num,"Vote_Dday":Vote_Dday,"Vote_Member":member[0].Member});
+	Vote.insert({"Project_Id":ObjectID(req.session.Project_Id),"Vote_Name":Vote_Name,"Vote_Opt":opt,"Vote_Num":abc,"Vote_Dday":Vote_Dday,"Vote_Member":member[0].Member});
 	res.send({suc:'suc'});
 	}
 	});
