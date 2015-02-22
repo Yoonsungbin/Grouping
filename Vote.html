@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>vote</title>
+		<meta name="description" content="">
+		<meta name="author" content="PC-164">
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="../javascripts/Vote.js"></script>
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../stylesheets/Vote.css">
+	</head>
+
+	<body>
+			<div id='vote_list' ></div>
+			<div id='vote_add'>
+				<a data-toggle="modal" href="#Vote_Add_Modal" data-role="add">
+				<button class="vote_btn">
+					투표 추가
+				</button></a>
+			</div>
+		<!--Vote_Add_Modal-->
+		<div class="modal fade" id="Vote_Add_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">투표 추가하기</h4>
+					</div>
+					<div class="modal-body">
+						<div id="vote_add_form">
+							<input type="text" id="vote_name" placeholder="투표 이름">
+							<br>
+							<input type="date" id="vote_due" placeholder="마감일">
+							<br>
+							<input type="text" name="option" placeholder="선택지">
+							<br>
+							<input type="text" name="option" placeholder="선택지">
+							<br>
+						</div>
+						<button id="option_add" class="vote_btn">
+							선택지 추가
+						</button>
+					</div>
+					<div>
+						<div class="modal-footer">
+							<button type="button" class="vote_btn" data-dismiss="modal">
+								취소
+							</button>
+							<button type="button" class="vote_btn" id="vote_add_btn">
+								투표 추가
+							</button>
+						</div>
+					</div>
+				</div><!--/.modal-content-->
+			</div><!--/.modal-dialog-->
+		</div>
+
+		<!--Vote_Do_Modal-->
+		<div class="modal fade" id="Vote_Do_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">투표 하기</h4>
+					</div>
+					<div class="modal-body"></div>
+					<div>
+						<div class="modal-footer">
+							<button type="button" class="vote_btn" data-dismiss="modal">
+								취소
+							</button>
+							<button type="button" class="vote_btn" id="vote_do_btn">
+								투표 완료
+							</button>
+						</div>
+					</div>
+				</div><!--/.modal-content-->
+			</div><!--/.modal-dialog-->
+		</div>
+
+		<!--Vote_Done_Modal-->
+		<div class="modal fade" id="Vote_Done_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">투표 보기</h4>
+					</div>
+					<div class="modal-body"></div>
+					<div>
+						<div class="modal-footer">
+							<button type="button" class="vote_btn" data-dismiss="modal">
+								닫기
+							</button>
+						</div>
+					</div>
+				</div><!--/.modal-content-->
+			</div><!--/.modal-dialog-->
+		</div>
+	</body>
+</html>
+

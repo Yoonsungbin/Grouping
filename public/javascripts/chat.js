@@ -1,4 +1,8 @@
-  $.getJSON('/Get_ProjectData', function (data) {
+$.getJSON('/GetId',function (data) {
+ Uid = data.name;
+});  
+
+$.getJSON('/Get_ProjectData', function (data) {
     var User_Name = data.User_Name;
     var Project_Id = data.Project_Id;
     var socket = io();
@@ -91,6 +95,7 @@ var scr = document.getElementById('messages');
   socket.on('putmessage',function(data) {
    if (data.User_Name == User_Name) {
     var text = '';
+  text += "<img src='/DownloadProfile/"+Uid+"' width=50px height=50px>";
   text += "<div class = 'my'>";
   text += "<div class = 'msg'>"+ data.message+ "</div>";
   text += "<div class ='time'>" + data.Time+ "</div>";
@@ -99,6 +104,7 @@ var scr = document.getElementById('messages');
 
   } else {
     var text = '';
+  text += "<img src='/DownloadProfile/"+data.Now_Id+"' width=50px height=50px>";
   text += "<div class='your'>";
   text += "<div class = 'member'>"+ data.User_Name + "</div>";
   text += "<div class = 'msg'>" + data.message + "</div>";
@@ -119,7 +125,8 @@ var time = new Date();
  socket.emit('getmessage', {
    message: message,
    User_Name:User_Name,
-   Time : current_time
+   Time : current_time,
+   Now_Id : Uid
  });
  $('#m').val('');
  return false;

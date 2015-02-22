@@ -14,6 +14,8 @@ $(document).ready(function() {
 	},
 	    animEndEventName = animEndEventNames[ Modernizr.prefixed('animation')],
 	    support = Modernizr.cssanimations;
+	   $(document).on('focus', 'input', function(){isAnimating = true;});
+	   $(document).on('blur', 'input', function(){isAnimating = false;});
 
 	function init() {
 		$('#' + curr_page).addClass('selected');

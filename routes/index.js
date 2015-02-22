@@ -9,6 +9,68 @@ var path = require('path');
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport();
 /* GET home page. */
+//모든리스트
+router.get('/GetVote',function(req,res) {
+console.log('a');
+	var db =req.db;
+	var Vote = db.get('Vote');
+	Vote.find({"Project_Id":ObjectID(req.session.Project_Id)}, function (err,data) {
+		if(data == null ) {
+
+		} else {	
+			console.log(data);
+			res.send(data);
+		}
+
+	});
+
+});
+
+
+
+//투표 추가버튼
+router.post('/VoteAdd',function(req,res){
+	var Vote_Name = req.body.Vote_Name;
+	var Vote_Opt = req.body.Vote_Opt;
+	var Vote_Num = req.body.Vote_Num;
+	var Vote_Dday = req.body.Vote_Dday;
+
+	console.log(Vote_Name);
+	console.log(Vote_Dday);
+	var opt =JSON.parse(Vote_Opt);
+	var num = JSON.parse(Vote_Num);
+	console.log(opt);
+	console.log(opt[0]);
+	console.log(opt.length);
+	var db = req.db;
+	var Vote = db.get('Vote');
+    var Project_Member = db.get('Project_Member');
+Project_Member.col.aggregate({$match:{"Project_Id":ObjectID(req.session.Project_Id)}},{$unwind:'$Member'},{$group:{"_id":'$_id',"Member":{$push:'$Member.Member_Name'}}}, function (err, member) {
+        if(member == null){
+        res.send(member);
+                        } else {
+                console.log(member);
+	Vote.insert({"Project_Id":ObjectID(req.session.Project_Id),"Vote_Name":Vote_Name,"Vote_Opt":opt,"Vote_Num":num,"Vote_Dday":Vote_Dday,"Vote_Member":member[0].Member});
+	res.send({suc:'suc'});
+	}
+	});
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 //개인정보수정페이지 이름가져오기
 router.get('/getUserName',function(req,res){
 	console.log('이름알아가자');
@@ -259,7 +321,12 @@ Project_Member.col.aggregate({$match:{"Project_Id":ObjectID(req.session.Project_
 	res.send(member);
    });
 });         
-
+router.get('/Vote', function (req, res) {
+  fs.readFile('Vote.html', function (error, data){
+    res.writeHead(200, { 'Content-Type':'text/html' });
+    res.end(data,'utf8');
+  });
+});
 
 
 /* First Page */
@@ -995,7 +1062,29 @@ router.post('/MyProfile',function (req, res)  {
     });
   });
 });
-router.get('/DownloadProfile', function (req, res) {
+router.get('/GetId',function(req,res){
+
+	res.send({name:req.session.User_Id});
+});
+router.get('/DownloadProfile/:id', function (req, res) {
+console.log('down load ');
+//	console.log(req);
+	console.log(req.params);
+	console.log(req.params.id);
+	console.log(req.session.User_Id);
+   var User_Id = req.params.id;
+  console.log(path.resolve("."));
+fs.exists(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg',function(exists){
+if(exists){
+console.log('존재');
+ res.sendFile(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg');
+} else {
+console.log('없음');
+res.sendFile(path.resolve(".")+'/public/profilephoto/default_image.jpg');
+}
+});
+});
+router.get('/MyImage', function (req, res) {
 console.log('down load ');
    var User_Id = req.session.User_Id;
   console.log(path.resolve("."));
