@@ -1490,6 +1490,9 @@ router.post('/appaddmemo', function(req, res){
    console.log(AppId);
   });
 }
+
+
+
        });
   res.send(data);
   }
@@ -1595,14 +1598,14 @@ Project_Member.find({"Project_Id":ObjectID(Project_Id)}, function(err, data){
 
 router.post('/appaddcomment', function(req, res){
 
- // console.log(req.body);
- console.log('memoadd 접근!!!!!!!!!!!!!!!!!!!!!!!!');
- var Work_Comment = JSON.parse(req.body.Comment);
+
+ var Comment_User = req.body.Comment_User;
+ var Comment = req.body.Comment;
  var Project_Work_Id = req.body.Project_Work_Id;
 
  var db = req.db;
  var Work_Comment_Db = db.get('Work_Comment');
- Work_Comment_Db.insert({"Project_Work_Id":Project_Work_Id, "Work_Comment":Work_Comment}, function(err, data){
+ Work_Comment_Db.insert({"Project_Work_Id":Project_Work_Id, "Comment_User":Comment_User, "Comment":Comment}, function(err, data){
   if(!err){
     console.log('add성공!!!!!');
     res.send(data);
@@ -1625,7 +1628,7 @@ router.post('/appmodifycomment', function(req, res){
   var Work_Comment = db.get('Work_Comment');
 
   Work_Comment.update({"_id":ObjectID(Insert_CommentId)},{$set:{
-   "Work_Comment.Comment": New_Comment
+   "Comment": New_Comment
  }});
   console.log('업데이트되었어요 코멘트');
   res.send({suc:'next'});
@@ -1636,17 +1639,14 @@ router.post('/appdeletecomment', function(req, res){
   console.log(Delete_CommentId);
   var db = req.db;
   var Work_Comment_Db = db.get('Work_Comment');
-
   Work_Comment_Db.remove({"_id":ObjectID(Delete_CommentId)}, function(err,doc){
     if(!err){
       console.log(doc);
       res.send({suc:'next'});
     }
-
   });
-
-
 });
+
 router.post('/appgetcomment', function(req, res){
  var Project_Work_Id = req.body.Project_Work_Id;
  var db = req.db;
@@ -1676,6 +1676,7 @@ router.post('/Calendar_Getdata', function(req, res){
     }
   })
 });
+
 router.post('/Calendar_Modify', function(req, res){
   console.log('달력에서 일정 수정하는 부분');
   var Work_Id = req.body.Work_Id;
@@ -1689,21 +1690,25 @@ router.post('/Calendar_Modify', function(req, res){
 });
 
 
-router.post('/GetMyWork', function(req, res){
-//var Project_Id = req.body.Project_Id;
+
+router.post('/AppGetMyList',function(req,res){
+  console.log('aaa');
 var User_Id = req.body.User_Id;
 var db = req.db;
 var Project_Work = db.get('Project_Work');
-var Project = db.get('Project');
-console.log('Mypage에서 보낸 User_Id : '+User_Id);
 Project_Work.find({"Work_Person.User_Id" :User_Id}, function(err, data){
-  if(!err){
-    console.log('유저 정보 데이터 보냅니다');
-    res.send(data);;
+Project_Work.col.aggregate({$match:{"Work_Person.User_Id":User_Id}},{$unwind:'$Work_Person'},{$match:{"Work_Person.User_Id":User_Id}},{$group:{"_id":'$Project_Name',"Work_Name":{$push:'$Work_Name'}}},function (err,data){
+  if(data == null){
+
+  } else {
+    console.log('유저 정보 데이터 보냅니다');  
+    console.log(data);
+    res.send({suc:data});
   }
 });
+  
 });
-
+});
 
 
 router.post('/App_Upload_Capture',function (req, res)  {
@@ -1761,9 +1766,7 @@ router.post('/GetProfilePhoto',function (req, res)  {
   console.log('User_Id:'+User_Id);
   console.log('일단 뭐라도 보내볼꼐여');
   console.log(path.resolve("."));
-  res.sendFile(path.resolve(".")+'/public/files/'+'User_Id'+'.jpg');
-  
-
+  res.sendFile(path.resolve(".")+'/public/files/'+'User_Id'+'.jpg'); 
 });
 */
 router.get('/MyImage', function (req, res) {
@@ -1771,27 +1774,215 @@ router.get('/MyImage', function (req, res) {
   console.log(path.resolve("."));
   console.log('파일이')
   fs.exists(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg', function (exists) {
+  util.debug(exists ? "it's there" : "no passwd!");
   if(exists){
     res.sendFile(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg');
   }
   else
     res.sendFile(path.resolve(".")+'/public/profilephoto/default_image.jpg');
-
-});  
- 
-
+  });  
 }); 
-router.post('/FindId', function(req,res){
-transporter.sendMail({
-  from:"zpzg8586@gmail.com",
-  to:"hero8586@naver.com",
-  subject:"example",
-  text:"success"
+
+router.post('/Find_PW', function(req,res){
+   console.log(req.body.User_Email);
+  console.log(req.body.User_Name);
+  var User_Email = req.body.User_Email;
+  var User_Name = req.body.User_Name;
+  var db = req.db;
+  var User = db.get('User');
+
+     User.findOne({"User_Email":User_Email, "User_Name":User_Name}, function(err, data){
+     if(data == null)
+    {
+      res.send({suc:false});  
+    }
+    else{
+      console.log('비밀번호 찾기 성공');
+     
+      transporter.sendMail({
+        from:"grouping6@gmail.com",
+        to: User_Email,
+        subject:"Grouping: 비밀번호 찾기 요청입니다.",
+        text : "User_Email : "+ data.User_Email +"\nUser_Password : "+ data.User_Pass
+      });
+      res.send({suc:true});
+    }
+  });
+
+
+ 
 });
-console.log('success');
 
+
+router.get('/DownloadProfile/:id', function (req, res) {
+console.log('down load ');
+//  console.log(req);
+   var User_Id = req.params.id;
+  console.log(path.resolve("."));
+fs.exists(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg',function(exists){
+if(exists){
+console.log('존재');
+ res.sendFile(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg');
+} else {
+console.log('없음');
+res.sendFile(path.resolve(".")+'/public/profilephoto/default_image.jpg');
+}
+});
 });
 
 
+router.post('/Email_Confirm', function(req,res){
+var User_Email = req.body.User_Email;
+var db = req.db;
+var User = db.get('User');
 
-module.exports = router;
+User.findOne({"User_Email":User_Email}, function(data){
+  console.log('요기는 됨');
+if(data == null){
+  console.log('요기되?');
+  res.send({suc:true});
+}
+else
+  res.send({suc:false});
+});
+});
+  
+router.post('/AppVoteAdd', function(req, res){
+
+console.log(req.body);
+  var Project_Id = req.body.Project_Id;
+ var Vote_Name = req.body.Vote_Name;
+ // var Vote_Opt = req.body.Vote_Opt;
+  var Vote_Num = req.body.Vote_Num;
+  var Vote_Dday = req.body.Vote_Dday;
+
+//  var Vote_Num = new Array();
+//console.log(temp);
+  console.log(Vote_Name);
+  console.log(Vote_Dday);
+
+
+  //console.log(JSON.parse(temp));
+ /// console.log(JSON.stringfy(temp));
+  //var opt =JSON.stringfy(Vote_Opt);
+
+  //console.log('데이타폼'+opt);
+  //console.log(opt);
+
+  var t = new Array();
+
+  var num = JSON.parse(Vote_Num);
+console.log(num.length);
+  for(var i = 0; i<num.length; i++){
+    t.push(num[i].opt);
+  }
+  console.log(t);
+
+  
+  var db = req.db;
+  var Vote = db.get('Vote');
+    var Project_Member = db.get('Project_Member');
+Project_Member.col.aggregate({$match:{"Project_Id":ObjectID(Project_Id)}},{$unwind:'$Member'},{$group:{"_id":'$_id',"Member":{$push:'$Member.Member_Name'}}}, function (err, member) {
+        if(member == null){
+        res.send(member);
+                        } else {
+                console.log(member);
+  Vote.insert({"Project_Id":ObjectID(Project_Id),"Vote_Name":Vote_Name,"Vote_Opt":t,"Vote_Num":num,"Vote_Dday":Vote_Dday,"Vote_Member":member[0].Member});
+  res.send({suc:'suc'});
+  }
+  });
+
+});
+
+router.post('/AppGetVote',function(req,res) {
+  var Project_Id = req.body.Project_Id;
+  console.log('a');
+  var db =req.db;
+  var Vote = db.get('Vote');
+  Vote.find({"Project_Id":ObjectID(Project_Id)}, function (err,data) {
+    if(data == null ) {
+
+    } else {  
+      console.log(data);
+      res.send(data);
+    }
+
+  });
+
+});
+router.post('/AppVoteDone',function(req,res){
+  var id = req.body.id;
+  var index = req.body.index;
+  var User_Name = req.body.User_Name;
+  var db =req.db;
+  var Vote = db.get('Vote');
+  
+  Vote.update({"_id":ObjectID(id),"Vote_Num.opt":index},{ $inc : {"Vote_Num.$.num":1}});
+  Vote.update({"_id":ObjectID(id)},{$pull :{"Vote_Member":User_Name}},{multi:true});
+Vote.findOne({"Vote_Num.opt":index},function(err, dataa){
+                console.log(dataa); 
+    res.send({ss:'ss'});
+        });
+
+});
+
+router.post('/AppGetVoteInfo',function(req,res) {
+  var Vote_Id = req.body.Vote_Id;
+  console.log(Vote_Id);
+  var db =req.db;
+  var Vote = db.get('Vote');
+  Vote.find({"_id":ObjectID(Vote_Id)}, function (err,data) {
+    if(data == null ) {
+
+    } else {  
+      console.log(data);
+      res.send(data);
+    }
+
+  });
+
+});
+router.post('/AppVoteDone',function(req,res) {
+  var id = req.body.id;
+  var index = req.body.index;
+  var db =req.db;
+  var Vote = db.get('Vote');
+  console.log('들어오나요');
+  console.log(id);
+  console.log(index);
+  console.log(req.session.User_Name);
+  Vote.update({"_id":ObjectID(id),"Vote_Num.opt":index},{ $inc : {"Vote_Num.$.num":1}});
+  Vote.update({"_id":ObjectID(id)},{$pull :{"Vote_Member":req.session.User_Name}},{multi:true});
+Vote.findOne({"Vote_Num.opt":index},function(err, dataa){
+                console.log(dataa); 
+    res.send({ss:'ss'});
+        });
+
+});
+router.post('/AppCommunityNewWrite',function(req,res){
+  var title = req.body.title;
+  var text = req.body.Text;
+  var month = 0 + String(parseInt(Date.today().getMonth())+1);
+  var today = Date.today().getFullYear()+'-'+month+'-'+Date.today().getDate();
+  console.log(today);
+  var User_Id =req.body.User_Id;
+  var db = req.db;
+  var Community = db.get('Community');
+
+  Community.insert({"Title":title,"User_Name":req.body.User_Name,"User_Email":req.body.User_Email, "User_Point":'1',"Day":today,"Text":text}); 
+  res.send({suc:true});
+});
+router.get('/CommunityList',function(req,res){
+  var db = req.db;
+  var Community = db.get('Community');
+
+  Community.find({},function(err,data){
+    if(data == null ) {
+
+    } else{
+      console.log(data);
+      res.send({suc:data});
+    }
+  });
+});
+  module.exports = router;
