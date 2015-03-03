@@ -1,0 +1,65 @@
+body {
+	font-family: '함초롬돋움';
+	font-size: 16px;
+	height: 100%;
+	-webkit-transition-property: height;
+	background: #d9d9d9;
+	color: #1F1F1F;
+}
+header{
+	text-align: center;
+}
+nav{
+	color: white;
+	padding: 3px;
+}
+nav>a{
+	color: white;
+	text-decoration: none;
+}
+input{
+	font-size: 14px;
+	font-family: '함초롬돋움';	
+}
+input[type="submit"] {
+	background: #689470;
+	color: #f2f2f2;
+	border: 0;
+}
+#file_add{
+	display: inline-block;
+}
+
+#view{
+	float: right;
+}
+#view>img{
+	height: 17px;
+}
+table{
+	width: 100%;
+}
+tr:first-child{
+	height: 25px;
+	background: #333333;
+	color: #F2F2F2;
+}
+.icon_width{
+	width: 32px;
+}
+.small{
+	width: 30px;
+}
+.big{
+	width: 90px;
+}
+.psd, .html, .doc, .jpg, .exe{
+	background-image: url(http://placehold.it/90x90);
+}
+#content span{
+	display: inline-block;
+	text-align: center;
+	width: 100px;
+	margin: 4px;
+}
+

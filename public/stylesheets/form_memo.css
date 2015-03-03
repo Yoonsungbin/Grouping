@@ -1,0 +1,52 @@
+/*chat*/
+body {
+   box-sizing: border-box;
+   overflow: hidden;
+   font: 13px Helvetica, Arial;
+}
+#txtarea {
+   width: 300px;
+   /*CSS로 브라우저 창 크기별로 이미지 사이즈 비율 자동 조정하기*/
+   height: 100%;
+   -webkit-transition-property: height;
+   border-left: 1px solid;
+   position: absolute;
+   top: 0%;
+   right: 0%;
+   overflow: scroll;
+   overflow-x: hidden
+}
+#txtappend {
+   height: 95%;
+   -webkit-transition-property: height;
+}
+#msg {
+   position: absolute;
+   bottom: 00%;
+   left: 0%;
+   width: 80%;
+}
+#messages {
+   list-style-type: none;
+   margin: 0;
+   padding: 0;
+}
+#messages li {
+   padding: 5px 10px;
+}
+#messages li:nth-child(odd) {
+   background: #eee;
+}
+
+#send {
+   position: absolute;
+   bottom: 0%;
+   right: 0%;
+   width: 17.75%;
+}
+#m {
+   width: 225px;
+}
+#sendbtn {
+   width: 50px;
+}

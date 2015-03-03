@@ -1,0 +1,84 @@
+ * {
+            box-sizing: border-box;
+         }
+         body {
+            background: #FFFFFF;
+            font-family: 'Helvetica Neue', 'Segoe UI', Sans-Serif;
+            padding-top: 40px;
+            padding-left: 30px;
+         }
+         .new {
+            position: absolute;
+            top: 5%;
+            left: 80%;
+            color: black;
+            margin: 0px 0px 0 0;
+            cursor: pointer;
+         }
+         .save {
+            position: absolute;
+            top: 5%;
+            left: 90%;
+         }
+         .new:hover {
+            color: #e67e22;
+         }
+         .addlabel {
+            position: absolute;
+            top: 5%;
+            left: 85%;
+         }
+         .label {
+            position: absolute !important;
+            width: 175px;
+            height: 70px;
+            padding: 0px;
+            background: #fccd4c;
+         }
+         .label .label-content {
+            width: 175px;
+            height: 25px;
+            box-shadow: 3px 3px 5px #aaa;
+            border-radius: 5px;
+         }
+         .card {
+            position: absolute !important;
+            width: 175px;
+            background: #fccd4c;
+            box-shadow: 3px 3px 5px #aaa;
+            border: 5px solid #689470;
+            border-radius: 5px;
+            
+         }
+         .card .card-content {
+            padding: 10px;
+            font-size: .9em;
+         }
+         .card:hover {
+            box-shadow: 3px 3px 5px #999;
+            cursor: pointer;
+         }
+         #edit {
+            position: absolute;
+            right: 0%;
+         }
+         #comment_form {
+            text-align: center;
+         }
+         #comment {
+            width: 80%;
+         }
+         #content_btn_another {
+            position: absolute;
+            right: 8%;
+            top: 5%;
+            width: 62px;
+            height: 26px;
+         }
+         #content_btn {
+            position: absolute;
+            right: 8%;
+            top: 5%;
+            width: 62px;
+            height: 26px;
+         }
