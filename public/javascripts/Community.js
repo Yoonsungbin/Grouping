@@ -28,7 +28,8 @@
 		$.each(list, function(index, item){
 			text += "<td class='no'>" + num + "</td>";
 			text += "<td class='title' id='"+item.id+"'>" + item.Title + "</td>";
-			text += "<td class='writer'><span class='ctb'>" + item.Point + "</span>" + item.Name + "</td>";
+			//text += "<td class='writer'><span class='ctb'>" + item.Point + "</span>" + item.Name + "</td>";
+			text += "<td class='writer'>"+item.Name + "</td>";
 			text += "<td class='date'>"+item.Dday+"</td>";
 			text += "</tr>";
 			num++;

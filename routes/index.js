@@ -8,6 +8,7 @@ var gcm = require('node-gcm');
 var path = require('path');
 var nodemailer = require('nodemailer');
 var transporter = nodemailer.createTransport();
+var util = require('util');
 /* GET home page. */
 router.get('/CommunityView',function(req,res){
 	
@@ -53,7 +54,7 @@ router.post('/CommunityNewWrite',function(req,res){
 	var db = req.db;
 	var Community = db.get('Community');
 
-	Community.insert({"Title":title,"User_Name":req.session.User_Name,"User_Point":'1',"Day":today,"Text":text});	
+	Community.insert({"Title":title,"User_Name":req.session.User_Name,"User_Email":req.session.User_Email,"User_Point":'1',"Day":today,"Text":text});	
 	res.redirect("Community");
 });
 
@@ -1199,6 +1200,7 @@ res.sendFile(path.resolve(".")+'/public/profilephoto/default_image.jpg');
 //////////////////////////////////////////////////////////////////////////////
 
 
+
 router.post('/add', function ( req, res) {
 
   var User_Email = req.body.User_Email;
@@ -1732,9 +1734,14 @@ var File = db.get('File');
 
    fs.writeFile(newPath, data, function(err){
     if(err) {
-      res.redirect("tab_memo.html");
+      console.log(err);
+     // res.send({suc:true});
+      res.json("사진업로드 실패!");
     } else {
-      res.redirect("tab_memo.html");
+
+      console.log('hi0');
+      res.send({suc:true});
+      //res.json("성공적으로 사진이 업로드 되었습니다.");
     }
   });
  });
@@ -1769,10 +1776,13 @@ router.post('/GetProfilePhoto',function (req, res)  {
   res.sendFile(path.resolve(".")+'/public/files/'+'User_Id'+'.jpg'); 
 });
 */
-router.get('/MyImage', function (req, res) {
+
+
+router.get('/AppMyImage', function (req, res) {
    var User_Id = req.session.App_UserId;
+   console.log('유저아이디:'+User_Id);
   console.log(path.resolve("."));
-  console.log('파일이')
+  console.log('////////////////////////////////////////////////////////');
   fs.exists(path.resolve(".")+'/public/profilephoto/'+User_Id+'.jpg', function (exists) {
   util.debug(exists ? "it's there" : "no passwd!");
   if(exists){
@@ -1782,6 +1792,7 @@ router.get('/MyImage', function (req, res) {
     res.sendFile(path.resolve(".")+'/public/profilephoto/default_image.jpg');
   });  
 }); 
+
 
 router.post('/Find_PW', function(req,res){
    console.log(req.body.User_Email);
@@ -1962,8 +1973,15 @@ Vote.findOne({"Vote_Num.opt":index},function(err, dataa){
 router.post('/AppCommunityNewWrite',function(req,res){
   var title = req.body.title;
   var text = req.body.Text;
-  var month = 0 + String(parseInt(Date.today().getMonth())+1);
-  var today = Date.today().getFullYear()+'-'+month+'-'+Date.today().getDate();
+  var month = String(parseInt(Date.today().getMonth())+1);
+  if(month<10){
+    month = '0'+month;
+  }
+  var date = String(parseInt(Date.today().getDate()));
+   if(date<10){
+    date = '0'+date;
+  }
+  var today = Date.today().getFullYear()+'-'+month+'-'+date;
   console.log(today);
   var User_Id =req.body.User_Id;
   var db = req.db;
@@ -1986,3 +2004,4 @@ router.get('/CommunityList',function(req,res){
   });
 });
   module.exports = router;
+
