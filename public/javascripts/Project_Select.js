@@ -43,7 +43,7 @@ function prepare() {
          // text += "<br><a class='prj' id='" + prjId + "'><br>" + item.title + "<br></a><div class='tt' id='" +btnId+"'><input type ='button' value='나가기'></div>";
          text += "<div class='prj' id ='"+item.Project_Id+"'>";
          text += "<img class='del' src='../images/delete.png'>";
-         text += "<span class ='due'>" + item.duedate + "</span>";
+         text += "<span class ='due'>" +"D - "+ item.duedate + "</span>";
  	 text += "<span class='title'>" + item.title + "</span>";
          text += "<div class ='detail'> " + item.memo + "</div>";
          text += "</div>";

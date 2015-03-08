@@ -4,11 +4,11 @@ $.getJSON('/GetUser',function(data){
 
 	var name = temp.User_Name;
 	var email = temp.User_Email;
-	var contribution = '기여도 ★★★★☆';
+	//var contribution = '기여도 ★★★★☆';
 	// 데이터를 알맞은 곳에 표시합니다.
 	$('#user_name').text(name);
 	$('#user_email').text(email);
-	$('#user_contribution').text(contribution);
+	//$('#user_contribution').text(contribution);
 	
 });
 

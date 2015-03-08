@@ -8,7 +8,7 @@ var session = require('express-session'),
 	RedisStore = require('connect-redis')(session);
 var app = express();
 var routes = require('./routes/index');
-var users = require('./routes/users');
+//var users = require('./routes/users');
 //socket network
 var http = require('http').Server(app);
 var fs = require('fs');
@@ -64,7 +64,7 @@ app.use(multer({ dest:'/public/',rename: function(fieldname,filename){
 }}));
 
 app.use('/', routes);
-app.use('/users', users);
+//app.use('/users', users);
 
 
 function Sockets(){

@@ -109,8 +109,6 @@ $(document).on('click', '#vote_add_btn', function(){
 	}
 	var oo = JSON.stringify(opt);
 	var nn = JSON.stringify(num);
-alert(oo);
-alert(nn);
 	$.ajax({
 		url : '/VoteAdd',
 		dataType : 'json',

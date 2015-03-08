@@ -1,84 +1,159 @@
- * {
-            box-sizing: border-box;
-         }
-         body {
-            background: #FFFFFF;
-            font-family: 'Helvetica Neue', 'Segoe UI', Sans-Serif;
-            padding-top: 40px;
-            padding-left: 30px;
-         }
-         .new {
-            position: absolute;
-            top: 5%;
-            left: 80%;
-            color: black;
-            margin: 0px 0px 0 0;
-            cursor: pointer;
-         }
-         .save {
-            position: absolute;
-            top: 5%;
-            left: 90%;
-         }
-         .new:hover {
-            color: #e67e22;
-         }
-         .addlabel {
-            position: absolute;
-            top: 5%;
-            left: 85%;
-         }
-         .label {
-            position: absolute !important;
-            width: 175px;
-            height: 70px;
-            padding: 0px;
-            background: #fccd4c;
-         }
-         .label .label-content {
-            width: 175px;
-            height: 25px;
-            box-shadow: 3px 3px 5px #aaa;
-            border-radius: 5px;
-         }
-         .card {
-            position: absolute !important;
-            width: 175px;
-            background: #fccd4c;
-            box-shadow: 3px 3px 5px #aaa;
-            border: 5px solid #689470;
-            border-radius: 5px;
-            
-         }
-         .card .card-content {
-            padding: 10px;
-            font-size: .9em;
-         }
-         .card:hover {
-            box-shadow: 3px 3px 5px #999;
-            cursor: pointer;
-         }
-         #edit {
-            position: absolute;
-            right: 0%;
-         }
-         #comment_form {
-            text-align: center;
-         }
-         #comment {
-            width: 80%;
-         }
-         #content_btn_another {
-            position: absolute;
-            right: 8%;
-            top: 5%;
-            width: 62px;
-            height: 26px;
-         }
-         #content_btn {
-            position: absolute;
-            right: 8%;
-            top: 5%;
-            width: 62px;
-            height: 26px;
-         }
+* {
+   box-sizing: border-box;
+}
+body {
+   width: 100%;
+   height: 100%;
+   -webkit-transition-property: height;
+   background: #d9d9d9;
+   font-family: '함초롬돋움';
+   padding-top: 40px;
+   padding-left: 30px;
+}
+.new {
+   position: fixed;
+   left: 20px;
+   bottom: 10px;
+   color: black;
+}
+.save {
+   position: absolute;
+   top: 5%;
+   left: 90%;
+}
+.addlabel {
+   position: fixed;
+   left: 110px;
+   bottom: 10px;
+}
+.label {
+   position: absolute !important;
+   width: 175px;
+   height: 70px;
+   padding: 0px;
+}
+.label .label-content {
+   width: 175px;
+   height: 30px;
+   background: #689470;
+   box-shadow: 1px 1px 5px #aaa;
+   border-radius: 5px;
+   line-height: 30px;
+   font-size: 14px;
+}
+.label-content:hover{
+   cursor: pointer;
+}
+.card {
+   position: absolute !important;
+   width: 175px;
+   background: white;
+   box-shadow: 1px 1px 5px #aaa;
+   border-radius: 5px;
+}
+.card .card-content {
+   padding: 10px;
+   font-size: 14px;
+   text-align: center;
+}
+.card:hover {
+   box-shadow: 3px 3px 5px #999;
+   cursor: pointer;
+}
+.card_name{
+   font-size: 16px;
+   color: #6243aa;
+    overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;
+   margin: 3px 0;
+   font-weight: bold;
+}
+.card_person{
+    overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;   
+   margin: 3px 0;
+   font-size: 12px;
+}
+.card_memo{
+    overflow: hidden;
+   white-space: nowrap;
+   text-overflow: ellipsis;   
+   margin: 3px 0;
+   font-size: 13px;
+}
+.modal-title{
+   font-family: '함초롬돋움';
+}
+#Modify_Name{
+   display: inline-block;
+   width: 85%;
+}
+.tog_edit{
+   display: inline-block;
+   width: 10%;
+   margin-left: 1%;
+   margin-bottom: 5px;
+}
+#toggle{
+   width: 100%;
+   padding: 4px 5px;
+   font-size: 16px;
+}
+#toggle[name="true"]{
+   background: #F2F2F2;
+   color: #737373;
+   border: 1px solid #F2F2F2;
+}
+#toggle[name="flase"]{
+   background: #689470;
+   color: #F2F2F2;
+   border: 1px solid #689470;
+}
+input[type="text"], input[type="date"], textarea{
+   display: block;
+   width: 100%;
+   padding: 3px 5px;
+   margin: 5px 0;
+   font-family: '함초롬돋움';
+   border: 1px solid #737373;
+}
+.datewidth{
+   display: inline-block;
+   width: 49%;
+   text-align: center;
+}
+input[type="date"]{
+   display: inline-block;
+   width: 80%;
+   border: 0;
+   border-bottom: 1px solid #737373;
+}
+.memlist{
+   display: inline-block;
+}
+label{
+   padding: 3px 5px;
+   background: #737373;
+}
+.input_title{
+   font-size: 18px;
+}
+#CoText{
+   display: inline-block;
+   width: 80%;
+   padding: 3px 5px;
+   font-family: '함초롬돋움';
+   border: 1px solid #737373;
+}
+#Comment{
+   display: inline-block;
+   width: 18%;
+   padding: 3px 5px;
+   margin-left: 1%;
+   font-family: '함초롬돋움';
+   border: 1px solid #737373;
+   background: #737373;
+   color: #f2f2f2;
+}

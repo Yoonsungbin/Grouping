@@ -3,14 +3,15 @@ body {
    padding: 0px;
    height: 100%;
    -webkit-transition-property: height;
-   font-family: '함초롬돋움';
+   font-family: '함초롬돋움', '돋움';
+   font-size: 14px;
    overflow: hidden;
 }
 .sidebar {
    width: 135px;
    height: 100%;
    -webkit-transition-property: height;
-   background-color: #737373;
+   background-color: #3a3e42;
    box-shadow: 1px 0px 7px rgba(0, 0, 0, 0.5);
    padding-top: 20px;
    position: absolute;
@@ -20,14 +21,14 @@ body {
 }
 .sidebar > a {
    float: right;
-   color: #F2F2F2;
+   color: #FFFFFF;
    padding-right: 5px;
-   font-size: 36px;
+   font-size: 18px;
    padding-bottom: 10px;
    text-decoration: none;
 }
 .sidebar > a:hover {
-   color: #f2b23a;
+   color: #7bbce0;
 }
 .menu {
    clear: both;
@@ -42,7 +43,7 @@ body {
 .menu li a {
    font-size: 16px;
    padding-right: 10px;
-   color: #F2F2F2;
+   color: #FFFFFF;
    display: block;
    width: 100%;
    height: 40px;
@@ -60,7 +61,7 @@ body {
    position: absolute;
    width: 0px;
    right: 0px;
-   background-color: #f2b23a;
+   background-color: #7bbce0;
    transition: all 0.15s ease-in-out;
    content: " ";
    z-index: 150;
@@ -81,7 +82,7 @@ body {
    position: absolute;
    top: 0;
    left: 135px;
-   right: 270px;
+   right: 285px;
 }
 
 #iframe {
@@ -94,7 +95,7 @@ body {
 }
 
 #mem_chat {
-   width: 270px;
+   width: 285px;
    height: 100%;
    -webkit-transition-property: height;
    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
@@ -102,7 +103,7 @@ body {
    top: 0;
    right: 0;
    z-index: 100;
-   background: #689470;
+   background: #282b2f;
 }
 #mem {
    width: 100%;
@@ -110,9 +111,9 @@ body {
    min-height: 128px;
    text-align: center;
    padding: 5px;
-   border: 5px solid #689470;
+   border: 5px solid #282b2f;
    border-bottom: 0;
-   color: #F2F2F2;
+   color: #FFFFFF;
    font-size: 16px;
    font-weight: bold;
 }
@@ -120,19 +121,19 @@ body {
    float: right;
    width: 24px;
    font-size: 16px;
-   color: #689470;
+   color: #282b2f;
    border: 0;
    padding: 2px;
-   background: #f2f2f2;
+   background: #fdfdf3;
 }
 #mem_list {
    width: 100%;
-   background: #F2F2F2;
+   background: #fdfdf3;
    position: absolute;
    top: 40px;
    left: 0;
    bottom: 75%;
-   border: 5px solid #689470;
+   border: 5px solid #282b2f;
    border-bottom: 0;
    overflow: auto;
    color: #1f1f1f;
@@ -161,11 +162,11 @@ body {
    top: 0;
    right: 0;
    bottom: 40px;
-   background: #f2f2f2;
+   background: #fdfdf3;
    font-size: 14px;
    overflow: auto;
    overflow-x: hidden;
-   border: 5px solid #689470;
+   border: 5px solid #282b2f;
 }
 #messages h4 {
    clear: both;
@@ -178,7 +179,7 @@ body {
    float: left;
 }
 .my, .your {
-   width: 175px;
+   width: 220px;
    display: inline-block;
    margin: 0 auto;
    margin-left: 5px;
@@ -192,9 +193,9 @@ body {
    margin-top: 3px;
 }
 .profile img {
-   width: 50px;
-   height: 50px;
-   border-radius: 25px;
+   width: 36px;
+   height: 36px;
+   border-radius: 18px;
 }
 .member {
    clear: both;
@@ -244,6 +245,7 @@ body {
 #m {
    width: 75%;
    height: 100%;
+   padding: 3px 5px;
    font-size: 14px;
    margin-left: 5px;
 }
@@ -251,8 +253,9 @@ body {
    float: right;
    width: 20%;
    height: 100%;
+   padding: 3px 5px;
    font-size: 13px;
    border: 0;
-   background: #fccd4c;
+   background: #7bbce0;
    margin-right: 5px;
 }

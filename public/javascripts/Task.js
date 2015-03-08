@@ -1,17 +1,3 @@
-	function show() {	
-	   var obj = document.getElementById('content_btn');
-           var obj_a = document.getElementById('content_btn_another');
-            var result= true;
-
-            if (result == true) {
-               obj_a.style.display = "none";
-               obj.style.display = "inline";
-            } else {
-               obj.style.display = "none";
-               obj_a.style.display = "inline";
-            }
-	}
-
 
 var Work_Id;
 
@@ -153,6 +139,7 @@ $.getJSON('/TaskAppend', function(data) {
                   }
 	var text = "";
 	var pp = 0;
+/*
             $.each(Work_List, function(index, item) {
 	       text += "<div class ='card' id='" + item.Id + "'  style='top:"+item.Top+"; left:"+item.Left+";'>";
                text += "<div class='card-content'>";
@@ -167,7 +154,19 @@ $.getJSON('/TaskAppend', function(data) {
 		$('#pp').val(item.Finish);
 		pp++;
             });
+*/
 
+ $.each(Work_List, function(index, item) {
+      text += "<div class ='card' id='" + item.Id + "'  style='top:" + item.Top + "; left:" + item.Left + ";'>";
+      text += "<div class='card-content'>";
+      text += "<div class='card_name'>" + item.Name + "</div>";
+      text += "<div class='card_person'>" + item.Person + " 담당</div>";
+      text += "<div class='card_memo'>" + item.Memo + "</div>";
+      text += "</div>";
+      text += "</div><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p>";
+      $('#pp').val(item.Finish);
+      pp++;
+   });
             $('body').append(text);
             $('.card').draggable({
              //  grid : [205, 140]
@@ -223,7 +222,8 @@ $(document).on('click', '.new', function() {
 var mem ="";
 //alert(MemberList[0].Name);
       		 $.each(MemberList, function(index, item) {
-      		 	mem += "<input class='chk' type='checkbox' name='"+item.Name+"' value='" + item.Name + "' id='" +item.Id+ "'>" + item.Name;
+      		 	//mem += "<input class='chk' type='checkbox' name='"+item.Name+"' value='" + item.Name + "' id='" +item.Id+ "'>" + item.Name;
+			mem += "<input class='chk' type='checkbox' name='" + item.Name + "' value='" + item.Name + "' id='" + item.Id + "'><label for=" + item.Id+">" + item.Name+"</label>";
             	  });
       		var box = document.getElementById('plz');
       		box.innerHTML = mem;
@@ -343,7 +343,8 @@ var DELAY = 500,
 
     var mem ="";
     $.each(MemberList, function(index, item) {
-      mem += "<input class='chk' type='checkbox' name='chec' value='" + item.Name + "' id='" +item.Id+ "'>" + item.Name;
+    //  mem += "<input class='chk' type='checkbox' name='chec' value='" + item.Name + "' id='" +item.Id+ "'>" + item.Name;
+			mem += "<input class='chk' type='checkbox' name='" + item.Name + "' value='" + item.Name + "' id='" + item.Id + "'><label for=" + item.Id+">" + item.Name+"</label>";
     });
     var bo = document.getElementById('meml');
     bo.innerHTML = mem;
